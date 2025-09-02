@@ -51,18 +51,16 @@ class FirestoreManager: ObservableObject {
     
     // MARK: - Parse Room Data
     private func parseRoom(from data: [String: Any]) -> Room? {
-        guard let roomAvailability = data["roomAvailbility"] as? String,
-              let roomDetail = data["roomDetail"] as? String,
-              let roomImageArray = data["roomImage"] as? [String],
-              let roomName = data["roomName"] as? String,
-              let roomPrice = data["roomPrice"] as? Int64,
-              let roomRating = data["roomRating"] as? Double else {
-            print("Error parsing room data")
-            return nil
-        }
+       
+        let roomAvailbility = data["roomAvailbility"] as? String ?? "Available"
+        let roomDetail = data["roomDetail"] as? String ?? "No detail"
+        let roomImageArray = data["roomImage"] as? [String] ?? []
+        let roomName = data["roomName"] as? String ?? "No name"
+        let roomPrice = data["roomPrice"] as? Int64 ?? 0
+        let roomRating = data["roomRating"] as? Double ?? 0.0
         
         return Room(
-            roomAvailability: roomAvailability,
+            roomAvailbility: roomAvailbility,
             roomDetail: roomDetail,
             roomImage: roomImageArray,
             roomName: roomName,

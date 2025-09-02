@@ -22,7 +22,7 @@ struct Hotel: Identifiable, Codable {
 // MARK: - Room Model
 struct Room: Identifiable, Codable {
     var id: String = UUID().uuidString
-    let roomAvailability: String
+    let roomAvailbility: String
     let roomDetail: String
     let roomImage: [String]
     let roomName: String
@@ -30,7 +30,7 @@ struct Room: Identifiable, Codable {
     let roomRating: Double
     
     enum CodingKeys: String, CodingKey {
-        case roomAvailability
+        case roomAvailbility
         case roomDetail
         case roomImage
         case roomName
@@ -45,7 +45,7 @@ extension Hotel {
         hotelNameType: "Top Tree Jungle Hotel",
         roomObj: [
             Room(
-                roomAvailability: "Available",
+                roomAvailbility: "Available",
                 roomDetail: "Mountain view",
                 roomImage: [
                     "https://www.pexels.com/photo/majestic-mountain-peak-at-sunrise-with-clouds-32878857/",

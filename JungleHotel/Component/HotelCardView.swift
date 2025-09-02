@@ -14,6 +14,7 @@ struct HotelCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Room Image
+//            old version before slide of image--scroll
             AsyncImage(url: URL(string: room.roomImage.first ?? "")) { image in
                 image
                     .resizable()
@@ -56,12 +57,12 @@ struct HotelCardView: View {
                     Spacer()
                     
                     // Availability
-                    Text(room.roomAvailability)
+                    Text(room.roomAvailbility)
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(room.roomAvailability.lowercased() == "available" ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                        .foregroundColor(room.roomAvailability.lowercased() == "available" ? .green : .red)
+                        .background(room.roomAvailbility.lowercased() == "available" ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
+                        .foregroundColor(room.roomAvailbility.lowercased() == "available" ? .green : .red)
                         .cornerRadius(4)
                 }
                 

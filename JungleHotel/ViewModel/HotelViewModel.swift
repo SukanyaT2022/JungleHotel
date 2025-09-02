@@ -63,7 +63,7 @@ class HotelViewModel: ObservableObject {
     
     // MARK: - Filter Available Rooms
     var availableRooms: [Room] {
-        return allRooms.filter { $0.roomAvailability.lowercased() == "available" }
+        return allRooms.filter { $0.roomAvailbility.lowercased() == "available" }
     }
     
     // MARK: - Get Rooms by Hotel
@@ -73,7 +73,7 @@ class HotelViewModel: ObservableObject {
     
     // MARK: - Get Available Rooms by Hotel
     func getAvailableRooms(for hotel: Hotel) -> [Room] {
-        return hotel.roomObj.filter { $0.roomAvailability.lowercased() == "available" }
+        return hotel.roomObj.filter { $0.roomAvailbility.lowercased() == "available" }
     }
     
     // MARK: - Search Hotels
