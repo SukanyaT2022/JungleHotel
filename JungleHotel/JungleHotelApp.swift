@@ -18,12 +18,32 @@ import SwiftUI
 
 import SwiftUI
 import FirebaseCore
-
+import FirebaseFirestore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    
+    // Configure Firebase
     FirebaseApp.configure()
+    
+    // Configure Firestore settings for better simulator performance
+    let db = Firestore.firestore()
+    let settings = FirestoreSettings()
+    
+    // Enable offline persistence
+    settings.isPersistenceEnabled = true
+    
+    // Set cache size (100 MB)
+    settings.cacheSizeBytes = FirestoreCacheSizeUnlimited
+    
+    // Apply settings
+    db.settings = settings
+    
+    // Disable App Check for simulator to avoid warnings
+    #if targetEnvironment(simulator)
+    print("Running on simulator - App Check warnings are expected")
+    #endif
 
     return true
   }

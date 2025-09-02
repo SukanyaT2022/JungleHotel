@@ -48,8 +48,10 @@ extension Hotel {
                 roomAvailbility: "Available",
                 roomDetail: "Mountain view",
                 roomImage: [
-                    "https://www.pexels.com/photo/majestic-mountain-peak-at-sunrise-with-clouds-32878857/",
-                    "https://images.pexels.com/photos/3243789/pexels-photo-3243789.jpeg"
+                    "https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg",
+                    "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg",
+                    "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg",
+                    "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg"
                 ],
                 roomName: "Forest room",
                 roomPrice: 200,
