@@ -5,7 +5,7 @@
 //
 import SwiftUI
 
-struct HotelListView: View {
+struct MainScreenView: View {
     @StateObject private var viewModel = HotelViewModel()
     @State private var searchText = ""
     @State private var showingFilterOptions = false
@@ -13,9 +13,12 @@ struct HotelListView: View {
     var body: some View {
         NavigationStack {
             contentView
-                .navigationTitle("Jungle Hotels")
+                .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $searchText, prompt: "Search hotels or rooms")
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        navigationTitleView
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         filterButton
                     }
@@ -26,6 +29,27 @@ struct HotelListView: View {
                 .refreshable {
                     viewModel.fetchHotels()
                 }
+        }
+    }
+    
+    // MARK: - Custom Navigation Title View
+    private var navigationTitleView: some View {
+        HStack(spacing: 8) {
+            // Option 1: System Icon (current)
+            Image(systemName: "leaf.fill")
+                .foregroundColor(.green)
+                .font(.title2)
+            
+            // Option 2: Custom Image (uncomment and add your logo to Assets.xcassets)
+            // Image("your-logo-name")
+            //     .resizable()
+            //     .aspectRatio(contentMode: .fit)
+            //     .frame(width: 24, height: 24)
+            
+            Text("Jungle Hotels")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
         }
     }
     
@@ -182,6 +206,6 @@ struct FilterOptionsView: View {
 }
 
 #Preview {
-    HotelListView()
+    MainScreenView()
 }
 

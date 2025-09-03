@@ -21,8 +21,8 @@ struct HotelCardView: View {
             VStack(alignment: .leading, spacing: 8) {
                 // Hotel Name
                 Text(hotelName)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.custom("Prata-Regular", size: 32)) // After importing Prata to project
+                       .foregroundColor(.primary)
                 
                 // Room Name
                 Text(room.roomName)
