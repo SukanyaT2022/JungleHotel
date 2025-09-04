@@ -62,6 +62,7 @@ struct MainScreenView: View {
             ErrorView(
                 message: viewModel.errorMessage,
                 onRetry: {
+                    //if user tap on retry button after show error -  it try to fetch data again
                     viewModel.fetchHotels()
                 }
             )
@@ -99,11 +100,8 @@ struct MainScreenView: View {
     
     // MARK: - Computed Properties
     private var filteredHotels: [Hotel] {
-        if searchText.isEmpty {
-            return viewModel.hotels
-        } else {
-            return viewModel.searchHotels(with: searchText)
-        }
+        // Always use the search function to ensure consistency
+        return viewModel.searchHotels(with: searchText)
     }
 }
 

@@ -82,12 +82,34 @@ class HotelViewModel: ObservableObject {
             return hotels
         }
         
-        return hotels.filter { hotel in
-            hotel.hotelNameType.lowercased().contains(query.lowercased()) ||
-            hotel.roomObj.contains { room in
-                room.roomName.lowercased().contains(query.lowercased()) ||
-                room.roomDetail.lowercased().contains(query.lowercased())
+        let lowercasedQuery = query.lowercased()
+        
+        return hotels.compactMap { hotel in
+            // Check if hotel name matches
+            let hotelNameMatches = hotel.hotelNameType.lowercased().contains(lowercasedQuery)
+            
+            // Filter rooms that match the search query
+            let matchingRooms = hotel.roomObj.filter { room in
+                room.roomName.lowercased().contains(lowercasedQuery) ||
+                room.roomDetail.lowercased().contains(lowercasedQuery)
             }
+            
+            // If hotel name matches, return all rooms
+            if hotelNameMatches {
+                return hotel
+            }
+            
+            // If no hotel name match but rooms match, return hotel with only matching rooms
+            if !matchingRooms.isEmpty {
+                return Hotel(
+                    id: hotel.id,
+                    hotelNameType: hotel.hotelNameType,
+                    roomObj: matchingRooms
+                )
+            }
+            
+            // No matches found
+            return nil
         }
     }
     
