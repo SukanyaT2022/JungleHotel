@@ -19,11 +19,6 @@ struct HotelCardView: View {
             
             // Room Details
             VStack(alignment: .leading, spacing: 8) {
-                // Hotel Name
-                Text(hotelName)
-                    .font(.custom("Prata-Regular", size: 32)) // After importing Prata to project
-                       .foregroundColor(.primary)
-                
                 // Room Name
                 Text(room.roomName)
                     .font(.title2)
@@ -53,7 +48,8 @@ struct HotelCardView: View {
                         .padding(.vertical, 4)
                         .background(room.roomAvailbility.lowercased() == "available" ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
                         .foregroundColor(room.roomAvailbility.lowercased() == "available" ? .green : .red)
-                        .cornerRadius(4)
+                        .cornerRadius(5)
+            
                 }
                 
                 // Price
@@ -66,8 +62,9 @@ struct HotelCardView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .padding(.leading, 24)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
         }
         .background(Color(.systemBackground))
         .cornerRadius(12)

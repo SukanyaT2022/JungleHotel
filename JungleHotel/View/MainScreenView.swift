@@ -15,12 +15,15 @@ struct MainScreenView: View {
             contentView
                 .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $searchText, prompt: "Search hotels or rooms")
+                
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         navigationTitleView
                     }
+                    
                     ToolbarItem(placement: .navigationBarTrailing) {
                         filterButton
+                        
                     }
                 }
                 .sheet(isPresented: $showingFilterOptions) {
@@ -33,6 +36,7 @@ struct MainScreenView: View {
     }
     
     // MARK: - Custom Navigation Title View
+    //target logo and navigation title
     private var navigationTitleView: some View {
         HStack(spacing: 8) {
             // Option 1: System Icon (current)
@@ -50,7 +54,10 @@ struct MainScreenView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
+             
         }
+        .padding(.top,20)
+        .padding(.bottom,30)
     }
     
     // MARK: - Content View
@@ -84,8 +91,11 @@ struct MainScreenView: View {
                 ForEach(filteredHotels) { hotel in
                     HotelSectionView(hotel: hotel)
                 }
+                
             }
-            .padding()
+//            hidescrolldown bar 
+            .scrollIndicators(.hidden)
+            .padding(.top,-20)
         }
     }
     

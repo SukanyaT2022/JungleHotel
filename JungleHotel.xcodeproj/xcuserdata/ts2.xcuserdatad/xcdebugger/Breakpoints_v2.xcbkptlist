@@ -62,40 +62,10 @@
             filePath = "JungleHotel/View/MainScreenView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "HotelSectionView"
-            landmarkType = "14">
-            <Locations>
-               <Location
-                  uuid = "A04C090F-6601-44E3-81BF-6A53737F84FE - 295b1ffd82f90ab3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "JungleHotel.MainScreenView.filteredHotels.getter : Swift.Array&lt;JungleHotel.Hotel&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/View/MainScreenView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "109"
-                  endingLineNumber = "109">
-               </Location>
-               <Location
-                  uuid = "A04C090F-6601-44E3-81BF-6A53737F84FE - 374d20c70f7cabe8"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "JungleHotel.HotelSectionView.init(hotel: JungleHotel.Hotel) -&gt; JungleHotel.HotelSectionView"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/%3Cstdin%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-            </Locations>
+            startingLineNumber = "122"
+            endingLineNumber = "122"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -128,36 +98,6 @@
             endingLineNumber = "85"
             landmarkName = "searchHotels(with:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "BD669036-CBE7-405C-8F5D-D150A1A1D6F3 - 885aa7bc0fb790a4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "JungleHotel.HotelViewModel.searchHotels(with: Swift.String) -&gt; Swift.Array&lt;JungleHotel.Hotel&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/ViewModel/HotelViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85">
-               </Location>
-               <Location
-                  uuid = "BD669036-CBE7-405C-8F5D-D150A1A1D6F3 - 660820fccf3fac18"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (JungleHotel.Hotel) -&gt; Swift.Bool in JungleHotel.HotelViewModel.searchHotels(with: Swift.String) -&gt; Swift.Array&lt;JungleHotel.Hotel&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/ViewModel/HotelViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -170,8 +110,8 @@
             filePath = "JungleHotel/View/MainScreenView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
             landmarkName = "hotelListContent"
             landmarkType = "24">
          </BreakpointContent>

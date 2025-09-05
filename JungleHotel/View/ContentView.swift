@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         MainScreenView()
+//        padding to the mainscreen
+            .padding(.horizontal, 20)
     }
 }
 
