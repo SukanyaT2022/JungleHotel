@@ -12,27 +12,112 @@ struct MainScreenView: View {
     
     var body: some View {
         NavigationStack {
-            contentView
-                .navigationBarTitleDisplayMode(.inline)
-                .searchable(text: $searchText, prompt: "Search hotels or rooms")
-                
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        navigationTitleView
-                    }
+            GeometryReader { geometry in
+                ZStack(alignment: .top) {
+                    // Background content that can scroll
+                    contentView
+                        .padding(.top, 80) // Add padding to account for sticky header
                     
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        filterButton
-                        
+                    // Sticky header
+                    VStack(spacing: 0) {
+                        headerView
+                        Spacer()
                     }
                 }
-                .sheet(isPresented: $showingFilterOptions) {
-                    FilterOptionsView()
-                }
-                .refreshable {
-                    viewModel.fetchHotels()
-                }
+            }
+            .navigationBarHidden(true)
+            .sheet(isPresented: $showingFilterOptions) {
+                FilterOptionsView()
+            }
+            .refreshable {
+                viewModel.fetchHotels()
+            }
         }
+    }
+    
+    // MARK: - Pinterest-style Header View
+    private var headerView: some View {
+        VStack(spacing: 12) {
+            // Top section with logo and filter button
+            HStack {
+                navigationTitleView
+                
+                Spacer()
+                
+                filterButton
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            
+            // Pinterest-style search bar
+            pinterestSearchBar
+                .padding(.bottom, 12)
+        }
+        .background(
+            Color(.systemBackground)
+                .ignoresSafeArea(.all, edges: .top)
+        )
+        .safeAreaInset(edge: .top) {
+            Color.clear.frame(height: 0)
+        }
+    }
+    
+    // MARK: - Edge-to-Edge Search Bar
+    private var pinterestSearchBar: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+                .font(.system(size: 16, weight: .medium))
+            
+            TextField("Search hotels, rooms...", text: $searchText)
+                .font(.system(size: 16))
+                .foregroundColor(.primary)
+                .textFieldStyle(PlainTextFieldStyle()) // Remove underline
+            
+            Spacer()
+            
+            // Right side icons
+            HStack(spacing: 8) {
+                if !searchText.isEmpty {
+                    Button(action: {
+                        searchText = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                            .font(.system(size: 16))
+                    }
+                }
+                
+                // Microphone icon
+                Button(action: {
+                    // Add microphone functionality here
+                    print("Microphone tapped")
+                }) {
+                    Image(systemName: "mic.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: 16, weight: .medium))
+                }
+                
+                // Camera icon
+                Button(action: {
+                    // Add camera functionality here
+                    print("Camera tapped")
+                }) {
+                    Image(systemName: "camera.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: 16, weight: .medium))
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity) // Make full width
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 25)
+                .stroke(Color.black, lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 25))
     }
     
     // MARK: - Custom Navigation Title View
@@ -54,10 +139,7 @@ struct MainScreenView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
-             
         }
-        .padding(.top,20)
-        .padding(.bottom,30)
     }
     
     // MARK: - Content View
@@ -91,11 +173,10 @@ struct MainScreenView: View {
                 ForEach(filteredHotels) { hotel in
                     HotelSectionView(hotel: hotel)
                 }
-                
             }
-//            hidescrolldown bar 
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
             .scrollIndicators(.hidden)
-            .padding(.top,-20)
         }
     }
     
@@ -135,9 +216,9 @@ struct HotelSectionView: View {
             
             Spacer()
             
-            Text("\(hotel.roomObj.count) rooms")
-                .font(.caption)
-                .foregroundColor(.secondary)
+//            Text("\(hotel.roomObj.count) rooms")
+//                .font(.caption)
+//                .foregroundColor(.secondary)
         }
         .padding(.horizontal)
     }

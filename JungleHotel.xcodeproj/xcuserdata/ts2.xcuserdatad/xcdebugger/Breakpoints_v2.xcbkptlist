@@ -64,8 +64,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "122"
             endingLineNumber = "122"
-            landmarkName = "body"
-            landmarkType = "24">
+            landmarkName = "MainScreenView"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -112,7 +112,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "98"
             endingLineNumber = "98"
-            landmarkName = "hotelListContent"
+            landmarkName = "pinterestSearchBar"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
