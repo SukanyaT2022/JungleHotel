@@ -10,6 +10,12 @@ struct MainScreenView: View {
     @State private var searchText = ""
     @State private var showingFilterOptions = false
     
+    // Filter state variables
+    @State private var minPrice: Double = 0
+    @State private var maxPrice: Double = 1000
+    @State private var minRating: Double = 0
+    @State private var selectedRoomTypes: Set<String> = []
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -26,9 +32,14 @@ struct MainScreenView: View {
                 }
             }
             .navigationBarHidden(true)
-            .sheet(isPresented: $showingFilterOptions) {
-                FilterOptionsView()
-            }
+                .fullScreenCover(isPresented: $showingFilterOptions) {
+                    FilterOptionsView(
+                        minPrice: $minPrice,
+                        maxPrice: $maxPrice,
+                        minRating: $minRating,
+                        selectedRoomTypes: $selectedRoomTypes
+                    )
+                }
             .refreshable {
                 viewModel.fetchHotels()
             }
@@ -191,8 +202,69 @@ struct MainScreenView: View {
     
     // MARK: - Computed Properties
     private var filteredHotels: [Hotel] {
-        // Always use the search function to ensure consistency
-        return viewModel.searchHotels(with: searchText)
+        // Start with search results
+        var hotels = viewModel.searchHotels(with: searchText)
+        
+        // Apply price filter
+        hotels = hotels.compactMap { hotel in
+            let filteredRooms = hotel.roomObj.filter { room in
+                let price = Double(room.roomPrice)
+                return price >= minPrice && price <= maxPrice
+            }
+            
+            if filteredRooms.isEmpty {
+                return nil
+            }
+            
+            return Hotel(
+                id: hotel.id,
+                hotelNameType: hotel.hotelNameType,
+                roomObj: filteredRooms
+            )
+        }
+        
+        // Apply rating filter
+        if minRating > 0 {
+            hotels = hotels.compactMap { hotel in
+                let filteredRooms = hotel.roomObj.filter { room in
+                    room.roomRating >= minRating
+                }
+                
+                if filteredRooms.isEmpty {
+                    return nil
+                }
+                
+                return Hotel(
+                    id: hotel.id,
+                    hotelNameType: hotel.hotelNameType,
+                    roomObj: filteredRooms
+                )
+            }
+        }
+        
+        // Apply room type filter
+        if !selectedRoomTypes.isEmpty {
+            hotels = hotels.compactMap { hotel in
+                let filteredRooms = hotel.roomObj.filter { room in
+                    selectedRoomTypes.contains { roomType in
+                        room.roomName.lowercased().contains(roomType.lowercased()) ||
+                        room.roomDetail.lowercased().contains(roomType.lowercased())
+                    }
+                }
+                
+                if filteredRooms.isEmpty {
+                    return nil
+                }
+                
+                return Hotel(
+                    id: hotel.id,
+                    hotelNameType: hotel.hotelNameType,
+                    roomObj: filteredRooms
+                )
+            }
+        }
+        
+        return hotels
     }
 }
 
@@ -225,7 +297,7 @@ struct HotelSectionView: View {
     
     private var roomsList: some View {
         ForEach(hotel.roomObj) { room in
-            NavigationLink(destination: HotelDetailView()) {
+            NavigationLink(destination: HotelDetailView(room: room, hotelName: hotel.hotelNameType)) {
                 HotelCardView(
                     room: room,
                     hotelName: hotel.hotelNameType
@@ -267,31 +339,274 @@ struct ErrorView: View {
 struct FilterOptionsView: View {
     @Environment(\.dismiss) private var dismiss
     
+    // Filter binding variables
+    @Binding var minPrice: Double
+    @Binding var maxPrice: Double
+    @Binding var minRating: Double
+    @Binding var selectedRoomTypes: Set<String>
+    
+    // Available room types
+    private let roomTypes = ["Single Room", "Double Room", "Suite", "Deluxe", "Family Room", "Presidential Suite"]
+    
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading, spacing: 20) {
-                Text("Filter Options")
-                    .font(.title2)
-                    .fontWeight(.bold)
+            VStack(spacing: 0) {
+                // Custom header
+                VStack(spacing: 16) {
+                    HStack {
+                        Button("Reset") {
+                            resetFilters()
+                        }
+                        .foregroundColor(.red)
+                        .font(.system(size: 16, weight: .medium))
+                        
+                        Spacer()
+                        
+                        Text("Filters")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                        
+                        Button("Apply") {
+                            applyFilters()
+                            dismiss()
+                        }
+                        .fontWeight(.semibold)
+                        .font(.system(size: 16, weight: .semibold))
+                    }
+                    .padding(.horizontal, 30)
+                    .padding(.top, 80)
+                    .padding(.bottom, 10)
+                }
+                .background(Color(.systemBackground))
                 
-                Text("Coming Soon...")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
+                // Content
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Price Filter Section
+                        priceFilterSection
+                          
+                        Divider()
+                        
+                        // Rating Filter Section
+                        ratingFilterSection
+                        
+                        Divider()
+                        
+                        // Room Type Filter Section
+                        roomTypeFilterSection
+                        
+                        Spacer(minLength: 100)
+                    }
+                    .padding(30)
+                }
             }
-            .padding()
-            .navigationTitle("Filters")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+            .navigationBarHidden(true)
+            .ignoresSafeArea(.all, edges: .top)
+        }
+    }
+    
+    // MARK: - Price Filter Section
+    private var priceFilterSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Price Range")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            VStack(spacing: 12) {
+                HStack {
+                    Text("$\(Int(minPrice))")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    
+                    Spacer()
+                    
+                    Text("$\(Int(maxPrice))")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                
+                // Price range slider
+                VStack(spacing: 8) {
+                    RangeSlider(
+                        minValue: $minPrice,
+                        maxValue: $maxPrice,
+                        bounds: 0...1000
+                    )
+                    
+                    HStack {
+                        Text("$0")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Text("$1000+")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
         }
     }
+    
+    // MARK: - Rating Filter Section
+    private var ratingFilterSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Minimum Rating")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            VStack(spacing: 12) {
+                HStack {
+                    ForEach(0..<5) { index in
+                        Image(systemName: index < Int(minRating) ? "star.fill" : "star")
+                            .foregroundColor(index < Int(minRating) ? .yellow : .gray)
+                            .font(.title2)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(minRating, specifier: "%.1f")+")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                
+                Slider(value: $minRating, in: 0...5, step: 0.5)
+                    .accentColor(.yellow)
+                
+                HStack {
+                    Text("Any")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Text("5.0")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Room Type Filter Section
+    private var roomTypeFilterSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Room Type")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: 12) {
+                ForEach(roomTypes, id: \.self) { roomType in
+                    roomTypeButton(roomType)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Room Type Button
+    private func roomTypeButton(_ roomType: String) -> some View {
+        Button(action: {
+            if selectedRoomTypes.contains(roomType) {
+                selectedRoomTypes.remove(roomType)
+            } else {
+                selectedRoomTypes.insert(roomType)
+            }
+        }) {
+            Text(roomType)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(selectedRoomTypes.contains(roomType) ? .white : .primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
+                .background(
+                    selectedRoomTypes.contains(roomType) 
+                    ? Color.blue 
+                    : Color(.systemGray6)
+                )
+                .cornerRadius(20)
+        }
+    }
+    
+    // MARK: - Filter Actions
+    private func resetFilters() {
+        minPrice = 0
+        maxPrice = 1000
+        minRating = 0
+        selectedRoomTypes.removeAll()
+    }
+    
+    private func applyFilters() {
+        // Filters are automatically applied through bindings
+        print("Applied filters:")
+        print("Price: $\(Int(minPrice)) - $\(Int(maxPrice))")
+        print("Min Rating: \(minRating)")
+        print("Room Types: \(selectedRoomTypes)")
+    }
+}
+
+// MARK: - Range Slider Component
+struct RangeSlider: View {
+    @Binding var minValue: Double
+    @Binding var maxValue: Double
+    let bounds: ClosedRange<Double>
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let sliderWidth = geometry.size.width
+            let minPosition = CGFloat((minValue - bounds.lowerBound) / (bounds.upperBound - bounds.lowerBound)) * sliderWidth
+            let maxPosition = CGFloat((maxValue - bounds.lowerBound) / (bounds.upperBound - bounds.lowerBound)) * sliderWidth
+            
+            ZStack(alignment: .leading) {
+                // Track
+                Rectangle()
+                    .fill(Color.gray)
+                    .frame(height: 4)
+                    .cornerRadius(2)
+                
+                // Active track
+                Rectangle()
+                    .fill(Color.green)
+                    .frame(width: maxPosition - minPosition, height: 4)
+                    .cornerRadius(2)
+                    .offset(x: minPosition)
+                
+                // Min thumb
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 20, height: 20)
+                    .offset(x: minPosition - 10)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                let newValue = Double(value.location.x / sliderWidth) * (bounds.upperBound - bounds.lowerBound) + bounds.lowerBound
+                                minValue = min(max(newValue, bounds.lowerBound), maxValue - 10)
+                            }
+                    )
+                
+                // Max thumb
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 20, height: 20)
+                    .offset(x: maxPosition - 10)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                let newValue = Double(value.location.x / sliderWidth) * (bounds.upperBound - bounds.lowerBound) + bounds.lowerBound
+                                maxValue = max(min(newValue, bounds.upperBound), minValue + 10)
+                            }
+                    )
+            }
+        }
+        .frame(height: 20)
+    }
+      
 }
 
 #Preview {
