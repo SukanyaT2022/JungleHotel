@@ -31,20 +31,9 @@ struct HotelDetailView: View {
                 // Main content
                 ScrollView {
                     VStack(spacing: 0) {
-                        // Navigation icons and room info at the top
-                        VStack(alignment: .leading, spacing: 16) {
-                            // Navigation icons
-                            navigationIconsSection
-                            
-                            // Room name and rating
-                            roomHeaderSection
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 50) // Account for safe area
-                        .padding(.bottom, 16)
-                        
-                        // Image Gallery
+                        // Image Gallery with top padding to push below navigation
                         imageGallerySection(geometry: geometry)
+                            .padding(.top, 140) // Push image gallery below sticky navigation and room header
                         
                         // Content Section
                         VStack(alignment: .leading, spacing: 20) {
@@ -66,7 +55,31 @@ struct HotelDetailView: View {
                         .padding(.top, 20)
                     }
                 }
+                .scrollIndicators(.hidden)
                 .ignoresSafeArea(.all, edges: .top)
+                
+                // Sticky navigation and room header
+                VStack(spacing: 0) {
+                    // Navigation icons
+                    navigationIconsSection
+                        .padding(.horizontal, 16)
+                        .padding(.top, 10) // Minimal space above navigation bar
+                        .padding(.bottom, 0)
+                        .background(Color.white)
+//                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 2)
+                    
+                    // Room name and rating - sticky below navigation
+                    VStack(alignment: .leading, spacing: 8) {
+                        roomHeaderSection
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.white)
+                    .shadow(color: .black.opacity(0.05), radius: 1, x: 0, y: 1)
+                    
+                    Spacer()
+                }
             }
         }
         .navigationBarHidden(true)
@@ -82,9 +95,9 @@ struct HotelDetailView: View {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundColor(.primary)
-                    .frame(width: 36, height: 36)
-                    .background(Color(.systemGray6))
-                    .clipShape(Circle())
+//                    .frame(width: 36, height: 36)
+//                    .background(Color(.systemGray6))
+//                    .clipShape(Circle())
             }
             
             Spacer()
@@ -97,8 +110,8 @@ struct HotelDetailView: View {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(isFavorite ? .red : .primary)
-                        .frame(width: 36, height: 36)
-                        .background(Color(.systemGray6))
+//                        .frame(width: 36, height: 36)
+//                        .background(Color(.systemGray6))
                         .clipShape(Circle())
                 }
                 
@@ -109,9 +122,9 @@ struct HotelDetailView: View {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(.primary)
-                        .frame(width: 36, height: 36)
-                        .background(Color(.systemGray6))
-                        .clipShape(Circle())
+//                        .frame(width: 36, height: 36)
+//                        .background(Color(.systemGray6))
+//                        .clipShape(Circle())
                 }
             }
         }
@@ -259,14 +272,6 @@ struct HotelDetailView: View {
                     .padding(.leading, 4)
                 
                 Spacer()
-                // Rating badge on the left
-                Text("8.8")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.blue)
-                    .cornerRadius(8)
                 
             }
         }
