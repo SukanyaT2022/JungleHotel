@@ -19,7 +19,8 @@ import SwiftUI
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
-
+//step 7 import swiftdata
+import SwiftData
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -59,5 +60,8 @@ struct JungleHotelApp: App {
     WindowGroup {
       ContentView()
     }
+//      step 8 line below for swiftdata
+    .modelContainer(for: HotelSwiftDataModel.self)
   }
 }
+//step 9 go to main screenview

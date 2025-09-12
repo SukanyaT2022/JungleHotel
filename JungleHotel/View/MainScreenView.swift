@@ -4,11 +4,18 @@
 //  Created by TS2 on 8/26/25.
 //
 import SwiftUI
+//donot forrget to add import swift data
 
+import SwiftData
 struct MainScreenView: View {
     @StateObject private var viewModel = HotelViewModel()
     @State private var searchText = ""
     @State private var showingFilterOptions = false
+    
+    //    step 9 for swiftdata 2line below- we create context create key to get data
+    @Environment(\.modelContext) var context
+    //    alldata will save in qury variable
+    @Query private var hotels: [HotelSwiftDataModel]
     
     // Filter state variables
     @State private var minPrice: Double = 0
@@ -18,28 +25,33 @@ struct MainScreenView: View {
     
     var body: some View {
         NavigationStack {
+            
             GeometryReader { geometry in
-                ZStack(alignment: .top) {
-                    // Background content that can scroll
-                    contentView
-                        .padding(.top, 80) // Add padding to account for sticky header
-                    
-                    // Sticky header
-                    VStack(spacing: 0) {
-                        headerView
-                        Spacer()
+                ScrollView{
+                    ZStack(alignment: .top) {
+                        // Background content that can scroll
+                        contentView
+                            .padding(.top, 80) // Add padding to account for sticky header
+                        
+                        // Sticky header
+                        VStack(spacing: 0) {
+                            headerView
+                            Spacer()
+                        }
                     }
                 }
-            }
+                
+            }//close screlol view
+            
             .navigationBarHidden(true)
-                .fullScreenCover(isPresented: $showingFilterOptions) {
-                    FilterOptionsView(
-                        minPrice: $minPrice,
-                        maxPrice: $maxPrice,
-                        minRating: $minRating,
-                        selectedRoomTypes: $selectedRoomTypes
-                    )
-                }
+            .fullScreenCover(isPresented: $showingFilterOptions) {
+                FilterOptionsView(
+                    minPrice: $minPrice,
+                    maxPrice: $maxPrice,
+                    minRating: $minRating,
+                    selectedRoomTypes: $selectedRoomTypes
+                )
+            }
             .refreshable {
                 viewModel.fetchHotels()
             }
@@ -168,6 +180,7 @@ struct MainScreenView: View {
             )
         } else {
             hotelListContent
+            
         }
     }
     
@@ -184,6 +197,23 @@ struct MainScreenView: View {
                 ForEach(filteredHotels) { hotel in
                     HotelSectionView(hotel: hotel)
                 }
+                
+                //                        step 10 for swiftdata block code below- button
+                Button("Add hotel") {
+                    let newHotel = HotelSwiftDataModel(id: UUID().uuidString, hotelNameType: "New Hotel")
+                    context.insert(newHotel)
+                    try? context.save()
+                }
+                ScrollView{
+                    
+                    
+                    List(hotels) { singleHotel in
+                        Text(singleHotel.hotelNameType)
+                    }
+                    .frame(width:300,height:500)
+                    //                        end step 10 swiftdata
+                }
+                
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -201,7 +231,7 @@ struct MainScreenView: View {
     }
     
     // MARK: - Computed Properties
-    private var filteredHotels: [Hotel] {
+    private var filteredHotels: [HotelModel] {
         // Start with search results
         var hotels = viewModel.searchHotels(with: searchText)
         
@@ -216,7 +246,7 @@ struct MainScreenView: View {
                 return nil
             }
             
-            return Hotel(
+            return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
                 roomObj: filteredRooms
@@ -234,7 +264,7 @@ struct MainScreenView: View {
                     return nil
                 }
                 
-                return Hotel(
+                return HotelModel(
                     id: hotel.id,
                     hotelNameType: hotel.hotelNameType,
                     roomObj: filteredRooms
@@ -256,7 +286,7 @@ struct MainScreenView: View {
                     return nil
                 }
                 
-                return Hotel(
+                return HotelModel(
                     id: hotel.id,
                     hotelNameType: hotel.hotelNameType,
                     roomObj: filteredRooms
@@ -270,7 +300,7 @@ struct MainScreenView: View {
 
 // MARK: - Hotel Section View
 struct HotelSectionView: View {
-    let hotel: Hotel
+    let hotel: HotelModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -288,9 +318,9 @@ struct HotelSectionView: View {
             
             Spacer()
             
-//            Text("\(hotel.roomObj.count) rooms")
-//                .font(.caption)
-//                .foregroundColor(.secondary)
+            //            Text("\(hotel.roomObj.count) rooms")
+            //                .font(.caption)
+            //                .foregroundColor(.secondary)
         }
         .padding(.horizontal)
     }
@@ -386,7 +416,7 @@ struct FilterOptionsView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         // Price Filter Section
                         priceFilterSection
-                          
+                        
                         Divider()
                         
                         // Rating Filter Section
@@ -606,7 +636,7 @@ struct RangeSlider: View {
         }
         .frame(height: 20)
     }
-      
+    
 }
 
 #Preview {

@@ -159,7 +159,7 @@ struct ImageCarouselView: View {
 
 #Preview {
     HotelCardView(
-        room: Hotel.sampleHotel.roomObj[0],
-        hotelName: Hotel.sampleHotel.hotelNameType
+        room: HotelModel.sampleHotel.roomObj[0],
+        hotelName: HotelModel.sampleHotel.hotelNameType
     )
 }

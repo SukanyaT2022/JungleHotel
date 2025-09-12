@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Hotel Model
-struct Hotel: Identifiable, Codable {
+struct HotelModel: Identifiable, Codable {
     var id: String = UUID().uuidString
     let hotelNameType: String
     let roomObj: [Room]
@@ -40,8 +40,8 @@ struct Room: Identifiable, Codable {
 }
 
 // MARK: - Sample Data for Preview
-extension Hotel {
-    static let sampleHotel = Hotel(
+extension HotelModel {
+    static let sampleHotel = HotelModel(
         hotelNameType: "Top Tree Jungle Hotel",
         roomObj: [
             Room(

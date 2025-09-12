@@ -20,7 +20,7 @@ struct HotelDetailView: View {
         PropertyHighlight(icon: "mountain.2.fill", title: "Views", subtitle: "Sea view, Balcony, View, Garden view")
     ]
     
-    init(room: Room = Hotel.sampleHotel.roomObj[0], hotelName: String = "Chogogo Dive & Beach Resort Bonaire") {
+    init(room: Room = HotelModel.sampleHotel.roomObj[0], hotelName: String = "Chogogo Dive & Beach Resort Bonaire") {
         self.room = room
         self.hotelName = hotelName
     }

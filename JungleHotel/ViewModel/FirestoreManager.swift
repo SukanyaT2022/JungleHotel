@@ -26,7 +26,7 @@ class FirestoreManager: ObservableObject {
     }
     
     // MARK: - Fetch Hotels
-    func fetchHotels() async throws -> [Hotel] {
+    func fetchHotels() async throws -> [HotelModel] {
         do {
             print("Attempting to fetch hotels from Firestore...")
             let snapshot = try await db.collection("hotelData").getDocuments()
@@ -37,7 +37,7 @@ class FirestoreManager: ObservableObject {
                 return []
             }
         
-            var hotels: [Hotel] = []
+            var hotels: [HotelModel] = []
             
             for document in snapshot.documents {
                 let data = document.data()
@@ -65,7 +65,7 @@ class FirestoreManager: ObservableObject {
                     }
                 }
                 
-                let hotel = Hotel(
+                let hotel = HotelModel(
                     id: document.documentID,
                     hotelNameType: hotelNameType,
                     roomObj: rooms
@@ -119,7 +119,7 @@ class FirestoreManager: ObservableObject {
     }
     
     // MARK: - Fetch Hotels with Listener (Real-time updates)
-    func fetchHotelsWithListener(completion: @escaping ([Hotel]) -> Void) -> ListenerRegistration {
+    func fetchHotelsWithListener(completion: @escaping ([HotelModel]) -> Void) -> ListenerRegistration {
         print("Setting up real-time listener for hotel data...")
         
         return db.collection("hotelData").addSnapshotListener { snapshot, error in
@@ -136,7 +136,7 @@ class FirestoreManager: ObservableObject {
             }
             
             print("Listener received \(documents.count) documents")
-            var hotels: [Hotel] = []
+            var hotels: [HotelModel] = []
             
             for document in documents {
                 let data = document.data()
@@ -155,7 +155,7 @@ class FirestoreManager: ObservableObject {
                     }
                 }
                 
-                let hotel = Hotel(
+                let hotel = HotelModel(
                     id: document.documentID,
                     hotelNameType: hotelNameType,
                     roomObj: rooms

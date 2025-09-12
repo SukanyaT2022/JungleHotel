@@ -12,7 +12,7 @@ import FirebaseFirestore
 // MARK: - Hotel View Model
 @MainActor
 class HotelViewModel: ObservableObject {
-    @Published var hotels: [Hotel] = []
+    @Published var hotels: [HotelModel] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     
@@ -67,17 +67,17 @@ class HotelViewModel: ObservableObject {
     }
     
     // MARK: - Get Rooms by Hotel
-    func getRooms(for hotel: Hotel) -> [Room] {
+    func getRooms(for hotel: HotelModel) -> [Room] {
         return hotel.roomObj
     }
     
     // MARK: - Get Available Rooms by Hotel
-    func getAvailableRooms(for hotel: Hotel) -> [Room] {
+    func getAvailableRooms(for hotel: HotelModel) -> [Room] {
         return hotel.roomObj.filter { $0.roomAvailbility.lowercased() == "available" }
     }
     
     // MARK: - Search Hotels
-    func searchHotels(with query: String) -> [Hotel] {
+    func searchHotels(with query: String) -> [HotelModel] {
         if query.isEmpty {
             return hotels
         }
@@ -101,7 +101,7 @@ class HotelViewModel: ObservableObject {
             
             // If no hotel name match but rooms match, return hotel with only matching rooms
             if !matchingRooms.isEmpty {
-                return Hotel(
+                return HotelModel(
                     id: hotel.id,
                     hotelNameType: hotel.hotelNameType,
                     roomObj: matchingRooms
@@ -114,7 +114,7 @@ class HotelViewModel: ObservableObject {
     }
     
     // MARK: - Filter by Price Range
-    func filterHotels(minPrice: Int, maxPrice: Int) -> [Hotel] {
+    func filterHotels(minPrice: Int, maxPrice: Int) -> [HotelModel] {
         return hotels.compactMap { hotel in
             let filteredRooms = hotel.roomObj.filter { room in
                 room.roomPrice >= minPrice && room.roomPrice <= maxPrice
@@ -124,7 +124,7 @@ class HotelViewModel: ObservableObject {
                 return nil
             }
             
-            return Hotel(
+            return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
                 roomObj: filteredRooms
@@ -133,13 +133,13 @@ class HotelViewModel: ObservableObject {
     }
     
     // MARK: - Sort Hotels by Price
-    func sortHotelsByPrice(ascending: Bool = true) -> [Hotel] {
+    func sortHotelsByPrice(ascending: Bool = true) -> [HotelModel] {
         return hotels.map { hotel in
             let sortedRooms = hotel.roomObj.sorted { room1, room2 in
                 ascending ? room1.roomPrice < room2.roomPrice : room1.roomPrice > room2.roomPrice
             }
             
-            return Hotel(
+            return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
                 roomObj: sortedRooms
@@ -148,13 +148,13 @@ class HotelViewModel: ObservableObject {
     }
     
     // MARK: - Sort Hotels by Rating
-    func sortHotelsByRating(ascending: Bool = false) -> [Hotel] {
+    func sortHotelsByRating(ascending: Bool = false) -> [HotelModel] {
         return hotels.map { hotel in
             let sortedRooms = hotel.roomObj.sorted { room1, room2 in
                 ascending ? room1.roomRating < room2.roomRating : room1.roomRating > room2.roomRating
             }
             
-            return Hotel(
+            return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
                 roomObj: sortedRooms
