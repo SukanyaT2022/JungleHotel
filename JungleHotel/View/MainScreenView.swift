@@ -11,12 +11,7 @@ struct MainScreenView: View {
     @StateObject private var viewModel = HotelViewModel()
     @State private var searchText = ""
     @State private var showingFilterOptions = false
-    
-    //    step 9 for swiftdata 2line below- we create context create key to get data
-    @Environment(\.modelContext) var context
-    //    alldata will save in qury variable
-    @Query private var hotels: [HotelSwiftDataModel]
-    
+  
     // Filter state variables
     @State private var minPrice: Double = 0
     @State private var maxPrice: Double = 1000
@@ -77,6 +72,7 @@ struct MainScreenView: View {
                 .padding(.bottom, 12)
         }
         .background(
+            
             Color(.systemBackground)
                 .ignoresSafeArea(.all, edges: .top)
         )
@@ -197,29 +193,14 @@ struct MainScreenView: View {
                 ForEach(filteredHotels) { hotel in
                     HotelSectionView(hotel: hotel)
                 }
-                
-                //                        step 10 for swiftdata block code below- button
-                Button("Add hotel") {
-                    let newHotel = HotelSwiftDataModel(id: UUID().uuidString, hotelNameType: "New Hotel")
-                    context.insert(newHotel)
-                    try? context.save()
+                PracticeSwiftData()
                 }
-                ScrollView{
-                    
-                    
-                    List(hotels) { singleHotel in
-                        Text(singleHotel.hotelNameType)
-                    }
-                    .frame(width:300,height:500)
-                    //                        end step 10 swiftdata
-                }
-                
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
             .scrollIndicators(.hidden)
         }
-    }
+ 
     
     // MARK: - Filter Button
     private var filterButton: some View {
@@ -581,7 +562,7 @@ struct FilterOptionsView: View {
     }
 }
 
-// MARK: - Range Slider Component
+// MARK: - Range Slider Component - price range on the filter
 struct RangeSlider: View {
     @Binding var minValue: Double
     @Binding var maxValue: Double

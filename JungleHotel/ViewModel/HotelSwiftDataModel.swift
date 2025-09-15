@@ -11,11 +11,11 @@ import SwiftData
 
 
 //step1  on swift data change from struct to class- remove word codbable
-//step 2 ad @Model
+//step 2 ad @Model - store data on the storage
 @Model
 class HotelSwiftDataModel: Identifiable {
     var id: String = UUID().uuidString
-    let hotelNameType: String
+   var hotelNameType: String
    
 //   step 4 add init on swiftdata
     init(id: String, hotelNameType: String) {
