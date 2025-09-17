@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import FirebaseFirestore
+import SwiftData
 
 // MARK: - Hotel View Model
 @MainActor
@@ -159,6 +160,58 @@ class HotelViewModel: ObservableObject {
                 hotelNameType: hotel.hotelNameType,
                 roomObj: sortedRooms
             )
+        }
+    }
+    
+    // MARK: - SwiftData Persistence
+    func saveHotelsToSwiftData(context: ModelContext) {
+        // Upsert hotels into SwiftData cache (HotelSwiftDataModel)
+        do {
+            // Fetch existing cached hotels to detect updates
+            let descriptor = FetchDescriptor<HotelSwiftDataModel>()
+            let existing = try context.fetch(descriptor)
+            var existingById: [String: HotelSwiftDataModel] = [:]
+            for h in existing { existingById[h.id] = h }
+
+            // Insert or update
+            for hotel in hotels {
+                if let cached = existingById[hotel.id] {
+                    // Update existing
+                    if cached.hotelNameType != hotel.hotelNameType {
+                        cached.hotelNameType = hotel.hotelNameType
+                    }
+                } else {
+                    // Insert new
+                    let newHotel = HotelSwiftDataModel(id: hotel.id, hotelNameType: hotel.hotelNameType)
+                    context.insert(newHotel)
+                }
+            }
+
+            // Optionally, remove entries not present anymore
+            let currentIds = Set(hotels.map { $0.id })
+            for (id, model) in existingById where !currentIds.contains(id) {
+                context.delete(model)
+            }
+
+            try context.save()
+        } catch {
+            print("SwiftData save error: \(error)")
+        }
+    }
+
+    func loadHotelsFromSwiftData(context: ModelContext) {
+        // Load cached hotels for offline display
+        do {
+            let descriptor = FetchDescriptor<HotelSwiftDataModel>()
+            let cached = try context.fetch(descriptor)
+            // Map cached minimal model back to HotelModel with empty rooms (since we don't have Room SwiftData yet)
+            let mapped: [HotelModel] = cached.map { HotelModel(id: $0.id, hotelNameType: $0.hotelNameType, roomObj: []) }
+            self.hotels = mapped
+            self.isLoading = false
+            self.errorMessage = ""
+        } catch {
+            self.errorMessage = "Failed to load cached hotels: \(error.localizedDescription)"
+            self.isLoading = false
         }
     }
     

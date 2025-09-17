@@ -14,8 +14,8 @@ import SwiftData
 //step 2 ad @Model - store data on the storage
 @Model
 class HotelSwiftDataModel: Identifiable {
-    var id: String = UUID().uuidString
-   var hotelNameType: String
+var id: String = UUID().uuidString
+    var hotelNameType: String
    
 //   step 4 add init on swiftdata
     init(id: String, hotelNameType: String) {

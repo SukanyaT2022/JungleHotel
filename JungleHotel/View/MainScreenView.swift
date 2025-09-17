@@ -1,4 +1,3 @@
-
 //  HotelListView
 //
 //  Created by TS2 on 8/26/25.
@@ -9,8 +8,10 @@ import SwiftUI
 import SwiftData
 struct MainScreenView: View {
     @StateObject private var viewModel = HotelViewModel()
+    @Environment(\.modelContext) private var modelContext
     @State private var searchText = ""
     @State private var showingFilterOptions = false
+    @State private var isOnline: Bool = true
   
     // Filter state variables
     @State private var minPrice: Double = 0
@@ -38,18 +39,24 @@ struct MainScreenView: View {
                 
             }//close screlol view
             
-            .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $showingFilterOptions) {
-                FilterOptionsView(
-                    minPrice: $minPrice,
-                    maxPrice: $maxPrice,
-                    minRating: $minRating,
-                    selectedRoomTypes: $selectedRoomTypes
-                )
+            .task {
+                await loadData()
             }
-            .refreshable {
-                viewModel.fetchHotels()
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                Task { await loadData() }
             }
+        }
+        .navigationBarHidden(true)
+        .fullScreenCover(isPresented: $showingFilterOptions) {
+            FilterOptionsView(
+                minPrice: $minPrice,
+                maxPrice: $maxPrice,
+                minRating: $minRating,
+                selectedRoomTypes: $selectedRoomTypes
+            )
+        }
+        .refreshable {
+            viewModel.fetchHotels()
         }
     }
     
@@ -188,18 +195,16 @@ struct MainScreenView: View {
     
     // MARK: - Hotel List Content
     private var hotelListContent: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(filteredHotels) { hotel in
-                    HotelSectionView(hotel: hotel)
-                }
-                PracticeSwiftData()
-                }
+        LazyVStack(spacing: 16) {
+            ForEach(filteredHotels) { hotel in
+                HotelSectionView(hotel: hotel)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .scrollIndicators(.hidden)
+            PracticeSwiftData()
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .scrollIndicators(.hidden)
+    }
  
     
     // MARK: - Filter Button
@@ -276,6 +281,42 @@ struct MainScreenView: View {
         }
         
         return hotels
+    }
+    
+    // MARK: - Data Loading
+    private func updateOnlineStatus() {
+        #if os(iOS)
+        // Very simple heuristic; consider replacing with NWPathMonitor in your app's network layer
+        if let reachability = try? awaitCheckReachability() {
+            isOnline = reachability
+        } else {
+            isOnline = true // default to online
+        }
+        #else
+        isOnline = true
+        #endif
+    }
+
+    @MainActor
+    private func loadData() async {
+        // Update connectivity state
+        updateOnlineStatus()
+
+        if isOnline {
+            // Online: fetch from Firebase and persist to SwiftData
+            await viewModel.fetchHotels()
+            // Persist to SwiftData for offline use
+            viewModel.saveHotelsToSwiftData(context: modelContext)
+        } else {
+            // Offline: load from SwiftData
+            viewModel.loadHotelsFromSwiftData(context: modelContext)
+        }
+    }
+
+    // Lightweight async reachability placeholder. Swap with NWPathMonitor-based service.
+    private func awaitCheckReachability() throws -> Bool {
+        // TODO: Replace with a real reachability check using NWPathMonitor in your networking layer.
+        return true
     }
 }
 
