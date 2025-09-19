@@ -3,15 +3,22 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct HotelDetailView: View {
     let room: Room
-    let hotelName: String
+    let hotel: HotelModel
     
     @Environment(\.dismiss) private var dismiss
     @State private var isFavorite = false
     @State private var currentImageIndex = 0
     @State private var showingShareSheet = false
+    
+    // Date picker states
+    @State private var checkInDate = Date()
+    @State private var checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+    @State private var showingCheckInPicker = false
+    @State private var showingCheckOutPicker = false
     
     // Sample property highlights data
     private let propertyHighlights = [
@@ -20,9 +27,9 @@ struct HotelDetailView: View {
         PropertyHighlight(icon: "mountain.2.fill", title: "Views", subtitle: "Sea view, Balcony, View, Garden view")
     ]
     
-    init(room: Room = HotelModel.sampleHotel.roomObj[0], hotelName: String = "Chogogo Dive & Beach Resort Bonaire") {
+    init(room: Room = HotelModel.sampleHotel.roomObj[0], hotel: HotelModel = HotelModel.sampleHotel) {
         self.room = room
-        self.hotelName = hotelName
+        self.hotel = hotel
     }
     
     var body: some View {
@@ -42,6 +49,12 @@ struct HotelDetailView: View {
                             
                             // Property highlights
                             propertyHighlightsSection
+                            
+                            // Contact information section
+                            contactInformationSection
+                            
+                            // Map section
+                            mapSection
                             
                             // Check-in/Check-out section
                             checkInOutSection
@@ -282,7 +295,7 @@ struct HotelDetailView: View {
         HStack(alignment: .top, spacing: 12) {
             
             // Hotel name on the right
-            Text(hotelName)
+            Text(hotel.hotelNameType)
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.leading)
@@ -306,31 +319,241 @@ struct HotelDetailView: View {
         }
     }
     
+    // MARK: - Contact Information Section
+    private var contactInformationSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Contact Information")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.primary)
+            
+            VStack(spacing: 12) {
+                // Address
+                if !hotel.address.isEmpty {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(.blue)
+                            .frame(width: 24)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Address")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.primary)
+                            
+                            Text(hotel.address)
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        
+                        Spacer()
+                    }
+                }
+                
+                // Contact Number
+                if !hotel.contactNumber.isEmpty {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "phone.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(.green)
+                            .frame(width: 24)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Phone")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.primary)
+                            
+                            Button(action: {
+                                if let url = URL(string: "tel:\(hotel.contactNumber)") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                Text(hotel.contactNumber)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.blue)
+                                    .underline()
+                            }
+                        }
+                        
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - Map Section
+    private var mapSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Location")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.primary)
+            
+            if let latitude = Double(hotel.latitude),
+               let longitude = Double(hotel.longitude),
+               latitude != 0.0 && longitude != 0.0 {
+                
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                let region = MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                )
+                
+                Map(coordinateRegion: .constant(region), annotationItems: [MapLocation(coordinate: coordinate)]) { location in
+                    MapPin(coordinate: location.coordinate, tint: .red)
+                }
+                .frame(height: 200)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.gray.opacity(0.1))
+                    .frame(height: 200)
+                    .overlay(
+                        VStack {
+                            Image(systemName: "map")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
+                            Text("Location not available")
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray)
+                        }
+                    )
+            }
+        }
+    }
+    
     // MARK: - Check In/Out Section
     private var checkInOutSection: some View {
-        VStack(spacing: 16) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Select Dates")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.primary)
+            
+            VStack(spacing: 16) {
+                // Check-in date picker
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Check-in")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
+                    
+                    Button(action: {
+                        showingCheckInPicker.toggle()
+                    }) {
+                        HStack {
+                            Image(systemName: "calendar")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 18))
+                            
+                            Text(checkInDate, style: .date)
+                                .font(.system(size: 16))
+                                .foregroundColor(.primary)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 14))
+                                .rotationEffect(.degrees(showingCheckInPicker ? 180 : 0))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    if showingCheckInPicker {
+                        DatePicker("", selection: $checkInDate, in: Date()..., displayedComponents: .date)
+                            .datePickerStyle(GraphicalDatePickerStyle())
+                            .padding(.horizontal, 8)
+                            .onChange(of: checkInDate) { oldValue, newValue in
+                                // Ensure check-out is at least 1 day after check-in
+                                if checkOutDate <= newValue {
+                                    checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newValue) ?? newValue
+                                }
+                                showingCheckInPicker = false
+                            }
+                    }
                 }
                 
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 4) {
+                // Check-out date picker
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Check-out")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
+                    
+                    Button(action: {
+                        showingCheckOutPicker.toggle()
+                    }) {
+                        HStack {
+                            Image(systemName: "calendar")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 18))
+                            
+                            Text(checkOutDate, style: .date)
+                                .font(.system(size: 16))
+                                .foregroundColor(.primary)
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 14))
+                                .rotationEffect(.degrees(showingCheckOutPicker ? 180 : 0))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    if showingCheckOutPicker {
+                        DatePicker("", selection: $checkOutDate, in: Calendar.current.date(byAdding: .day, value: 1, to: checkInDate)!..., displayedComponents: .date)
+                            .datePickerStyle(GraphicalDatePickerStyle())
+                            .padding(.horizontal, 8)
+                            .onChange(of: checkOutDate) { oldValue, newValue in
+                                showingCheckOutPicker = false
+                            }
+                    }
+                }
+                
+                // Stay duration and info
+                VStack(spacing: 8) {
+                    HStack {
+                        Text("Duration:")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Text("\(numberOfNights) night\(numberOfNights == 1 ? "" : "s")")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 4)
+                    
+                    Text("You won't be charged yet")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 8)
                 }
             }
-            
-            Text("You won't be charged yet")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, 20)
         }
+    }
+    
+    // MARK: - Computed Properties
+    private var numberOfNights: Int {
+        let calendar = Calendar.current
+        let startOfCheckIn = calendar.startOfDay(for: checkInDate)
+        let startOfCheckOut = calendar.startOfDay(for: checkOutDate)
+        let components = calendar.dateComponents([.day], from: startOfCheckIn, to: startOfCheckOut)
+        return max(components.day ?? 1, 1)
     }
     
     // MARK: - Booking Button
@@ -346,6 +569,12 @@ struct HotelDetailView: View {
         }
         .padding(.top, 20)
     }
+}
+
+// MARK: - Map Location Model
+struct MapLocation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
 }
 
 // MARK: - Property Highlight Model

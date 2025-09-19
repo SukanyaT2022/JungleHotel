@@ -19,6 +19,10 @@ struct MainScreenView: View {
     @State private var minRating: Double = 0
     @State private var selectedRoomTypes: Set<String> = []
     
+    // Date picker states
+    @State private var checkInDate = Date()
+    @State private var checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+    
     var body: some View {
         NavigationStack {
             
@@ -76,6 +80,9 @@ struct MainScreenView: View {
             
             // Pinterest-style search bar
             pinterestSearchBar
+            
+            // Native date pickers
+            nativeDatePickerSection
                 .padding(.bottom, 12)
         }
         .background(
@@ -216,7 +223,86 @@ struct MainScreenView: View {
         }
     }
     
+    // MARK: - Native Date Picker Section
+    private var nativeDatePickerSection: some View {
+        let dateRange: ClosedRange<Date> = {
+            let calendar = Calendar.current
+            let startDate = Date()
+            let endDate = calendar.date(byAdding: .year, value: 2, to: startDate) ?? startDate
+            return startDate...endDate
+        }()
+        
+         return VStack(spacing: 12) {
+             // Check-in and Check-out side by side
+             HStack(spacing: 20) {
+                 // Check-in DatePicker
+                 VStack(alignment: .leading, spacing: 4) {
+                     Text("Check-in")
+                         .font(.system(size: 14, weight: .medium))
+                         .foregroundColor(.secondary)
+                     
+                     DatePicker(
+                         "",
+                         selection: $checkInDate,
+                         in: dateRange,
+                         displayedComponents: [.date]
+                     )
+                     .datePickerStyle(.compact)
+                     .onChange(of: checkInDate) { oldValue, newValue in
+                         // Ensure check-out is at least 1 day after check-in
+                         if checkOutDate <= newValue {
+                             checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newValue) ?? newValue
+                         }
+                     }
+                 }
+                 .frame(maxWidth: .infinity, alignment: .leading)
+                 
+                 // Check-out DatePicker
+                 VStack(alignment: .leading, spacing: 4) {
+                     Text("Check-out")
+                         .font(.system(size: 14, weight: .medium))
+                         .foregroundColor(.secondary)
+                     
+                     DatePicker(
+                         "",
+                         selection: $checkOutDate,
+                         in: Calendar.current.date(byAdding: .day, value: 1, to: checkInDate)!...dateRange.upperBound,
+                         displayedComponents: [.date]
+                     )
+                     .datePickerStyle(.compact)
+                 }
+                 .frame(maxWidth: .infinity, alignment: .leading)
+             }
+             
+             // Duration display
+             HStack {
+                 Text("Duration:")
+                     .font(.system(size: 14, weight: .medium))
+                     .foregroundColor(.secondary)
+                 
+                 Spacer()
+                 
+                 Text("\(numberOfNights) night\(numberOfNights == 1 ? "" : "s")")
+                     .font(.system(size: 14, weight: .semibold))
+                     .foregroundColor(.blue)
+             }
+         }
+         .padding(.horizontal, 16)
+         .padding(.vertical, 12)
+         .background(Color(.systemGray6))
+         .cornerRadius(12)
+         .padding(.horizontal, 16)
+    }
+    
     // MARK: - Computed Properties
+    private var numberOfNights: Int {
+        let calendar = Calendar.current
+        let startOfCheckIn = calendar.startOfDay(for: checkInDate)
+        let startOfCheckOut = calendar.startOfDay(for: checkOutDate)
+        let components = calendar.dateComponents([.day], from: startOfCheckIn, to: startOfCheckOut)
+        return max(components.day ?? 1, 1)
+    }
+    
     private var filteredHotels: [HotelModel] {
         // Start with search results
         var hotels = viewModel.searchHotels(with: searchText)
@@ -235,6 +321,10 @@ struct MainScreenView: View {
             return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
+                latitude: hotel.latitude,
+                longitude: hotel.longitude,
+                contactNumber: hotel.contactNumber,
+                address: hotel.address,
                 roomObj: filteredRooms
             )
         }
@@ -253,6 +343,10 @@ struct MainScreenView: View {
                 return HotelModel(
                     id: hotel.id,
                     hotelNameType: hotel.hotelNameType,
+                    latitude: hotel.latitude,
+                    longitude: hotel.longitude,
+                    contactNumber: hotel.contactNumber,
+                    address: hotel.address,
                     roomObj: filteredRooms
                 )
             }
@@ -275,6 +369,10 @@ struct MainScreenView: View {
                 return HotelModel(
                     id: hotel.id,
                     hotelNameType: hotel.hotelNameType,
+                    latitude: hotel.latitude,
+                    longitude: hotel.longitude,
+                    contactNumber: hotel.contactNumber,
+                    address: hotel.address,
                     roomObj: filteredRooms
                 )
             }
@@ -349,7 +447,7 @@ struct HotelSectionView: View {
     
     private var roomsList: some View {
         ForEach(hotel.roomObj) { room in
-            NavigationLink(destination: HotelDetailView(room: room, hotelName: hotel.hotelNameType)) {
+            NavigationLink(destination: HotelDetailView(room: room, hotel: hotel)) {
                 HotelCardView(
                     room: room,
                     hotelName: hotel.hotelNameType

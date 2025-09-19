@@ -49,6 +49,12 @@ class FirestoreManager: ObservableObject {
                     continue
                 }
                 
+                // Parse new fields with default values
+                let latitude = data["latitude"] as? String ?? "0.0"
+                let longitude = data["longitude"] as? String ?? "0.0"
+                let contactNumber = data["contactNumber"] as? String ?? ""
+                let address = data["address"] as? String ?? ""
+                
                 guard let roomObjData = data["roomObj"] as? [[String: Any]] else {
                     print("Error: Missing or invalid 'roomObj' in document: \(document.documentID)")
                     continue
@@ -68,6 +74,10 @@ class FirestoreManager: ObservableObject {
                 let hotel = HotelModel(
                     id: document.documentID,
                     hotelNameType: hotelNameType,
+                    latitude: latitude,
+                    longitude: longitude,
+                    contactNumber: contactNumber,
+                    address: address,
                     roomObj: rooms
                 )
                 
@@ -148,6 +158,12 @@ class FirestoreManager: ObservableObject {
                     continue
                 }
                 
+                // Parse new fields with default values for listener
+                let latitude = data["latitude"] as? String ?? "0.0"
+                let longitude = data["longitude"] as? String ?? "0.0"
+                let contactNumber = data["contactNumber"] as? String ?? ""
+                let address = data["address"] as? String ?? ""
+                
                 var rooms: [Room] = []
                 for roomData in roomObjData {
                     if let room = self.parseRoom(from: roomData) {
@@ -158,6 +174,10 @@ class FirestoreManager: ObservableObject {
                 let hotel = HotelModel(
                     id: document.documentID,
                     hotelNameType: hotelNameType,
+                    latitude: latitude,
+                    longitude: longitude,
+                    contactNumber: contactNumber,
+                    address: address,
                     roomObj: rooms
                 )
                 

@@ -102,11 +102,15 @@ class HotelViewModel: ObservableObject {
             
             // If no hotel name match but rooms match, return hotel with only matching rooms
             if !matchingRooms.isEmpty {
-                return HotelModel(
-                    id: hotel.id,
-                    hotelNameType: hotel.hotelNameType,
-                    roomObj: matchingRooms
-                )
+            return HotelModel(
+                id: hotel.id,
+                hotelNameType: hotel.hotelNameType,
+                latitude: hotel.latitude,
+                longitude: hotel.longitude,
+                contactNumber: hotel.contactNumber,
+                address: hotel.address,
+                roomObj: matchingRooms
+            )
             }
             
             // No matches found
@@ -128,6 +132,10 @@ class HotelViewModel: ObservableObject {
             return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
+                latitude: hotel.latitude,
+                longitude: hotel.longitude,
+                contactNumber: hotel.contactNumber,
+                address: hotel.address,
                 roomObj: filteredRooms
             )
         }
@@ -143,6 +151,10 @@ class HotelViewModel: ObservableObject {
             return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
+                latitude: hotel.latitude,
+                longitude: hotel.longitude,
+                contactNumber: hotel.contactNumber,
+                address: hotel.address,
                 roomObj: sortedRooms
             )
         }
@@ -158,6 +170,10 @@ class HotelViewModel: ObservableObject {
             return HotelModel(
                 id: hotel.id,
                 hotelNameType: hotel.hotelNameType,
+                latitude: hotel.latitude,
+                longitude: hotel.longitude,
+                contactNumber: hotel.contactNumber,
+                address: hotel.address,
                 roomObj: sortedRooms
             )
         }
@@ -205,7 +221,7 @@ class HotelViewModel: ObservableObject {
             let descriptor = FetchDescriptor<HotelSwiftDataModel>()
             let cached = try context.fetch(descriptor)
             // Map cached minimal model back to HotelModel with empty rooms (since we don't have Room SwiftData yet)
-            let mapped: [HotelModel] = cached.map { HotelModel(id: $0.id, hotelNameType: $0.hotelNameType, roomObj: []) }
+            let mapped: [HotelModel] = cached.map { HotelModel(id: $0.id, hotelNameType: $0.hotelNameType, latitude: "0.0", longitude: "0.0", contactNumber: "", address: "", roomObj: []) }
             self.hotels = mapped
             self.isLoading = false
             self.errorMessage = ""

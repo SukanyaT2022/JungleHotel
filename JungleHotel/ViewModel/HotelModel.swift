@@ -11,10 +11,18 @@ import Foundation
 struct HotelModel: Identifiable, Codable {
     var id: String = UUID().uuidString
     let hotelNameType: String
+    let latitude: String
+    let longitude: String
+    let contactNumber: String
+    let address: String
     let roomObj: [Room]
     
     enum CodingKeys: String, CodingKey {
         case hotelNameType
+        case latitude
+        case longitude
+        case contactNumber
+        case address
         case roomObj
     }
 }
@@ -43,6 +51,10 @@ struct Room: Identifiable, Codable {
 extension HotelModel {
     static let sampleHotel = HotelModel(
         hotelNameType: "Top Tree Jungle Hotel",
+        latitude: "19.9072",
+        longitude: "99.8331",
+        contactNumber: "+66-53-123-456",
+        address: "88 Moo 3, Mae Rim District, Chiang Mai 50180, Northern Thailand",
         roomObj: [
             Room(
                 roomAvailbility: "Available",
