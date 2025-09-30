@@ -24,6 +24,14 @@ class HotelViewModel: ObservableObject {
     // MARK: - Initialization
     init() {
         setupRealtimeListener()
+        
+        // Fallback: If no data comes from listener within 5 seconds, try manual fetch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+            if self?.hotels.isEmpty == true && self?.isLoading == true {
+                print("⏰ HotelViewModel: Listener timeout, trying manual fetch as fallback")
+                self?.fetchHotels()
+            }
+        }
     }
     
     // MARK: - Fetch Hotels
@@ -49,10 +57,21 @@ class HotelViewModel: ObservableObject {
     
     // MARK: - Setup Real-time Listener
     func setupRealtimeListener() {
+        print("🔄 HotelViewModel: Setting up real-time listener...")
+        isLoading = true
         listener = firestoreManager.fetchHotelsWithListener { [weak self] hotels in
             DispatchQueue.main.async {
+                print("📱 HotelViewModel: Received \(hotels.count) hotels from listener")
                 self?.hotels = hotels
                 self?.isLoading = false
+                
+                // Clear any error message when we get data
+                if !hotels.isEmpty {
+                    self?.errorMessage = ""
+                    print("✅ HotelViewModel: Successfully updated with \(hotels.count) hotels")
+                } else {
+                    print("⚠️ HotelViewModel: Received empty hotels array")
+                }
             }
         }
     }

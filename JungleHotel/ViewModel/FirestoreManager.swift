@@ -134,27 +134,39 @@ class FirestoreManager: ObservableObject {
         
         return db.collection("hotelData").addSnapshotListener { snapshot, error in
             if let error = error {
-                print("Firestore Listener Error: \(error.localizedDescription)")
+                print("❌ Firestore Listener Error: \(error.localizedDescription)")
+                print("Error details: \(error)")
                 completion([])
                 return
             }
             
-            guard let documents = snapshot?.documents else {
-                print("No documents found in snapshot")
+            guard let snapshot = snapshot else {
+                print("❌ Snapshot is nil")
                 completion([])
                 return
             }
             
-            print("Listener received \(documents.count) documents")
+            print("📊 Listener snapshot metadata:")
+            print("  - Has pending writes: \(snapshot.metadata.hasPendingWrites)")
+            print("  - Is from cache: \(snapshot.metadata.isFromCache)")
+            print("  - Document count: \(snapshot.documents.count)")
+            
+            if snapshot.documents.isEmpty {
+                print("⚠️ No documents found in snapshot - this might be normal on first load")
+                completion([])
+                return
+            }
+            
+            print("✅ Listener received \(snapshot.documents.count) documents")
             var hotels: [HotelModel] = []
             
-            for document in documents {
+            for document in snapshot.documents {
                 let data = document.data()
-                print("Listener processing document: \(document.documentID)")
+                print("🏨 Listener processing document: \(document.documentID)")
                 
                 guard let hotelNameType = data["hotelNameType"] as? String,
                       let roomObjData = data["roomObj"] as? [[String: Any]] else {
-                    print("Listener: Invalid data structure in document: \(document.documentID)")
+                    print("❌ Listener: Invalid data structure in document: \(document.documentID)")
                     continue
                 }
                 
@@ -182,9 +194,10 @@ class FirestoreManager: ObservableObject {
                 )
                 
                 hotels.append(hotel)
+                print("✅ Successfully processed hotel: \(hotelNameType) with \(rooms.count) rooms")
             }
             
-            print("Listener completed: \(hotels.count) hotels processed")
+            print("🎉 Listener completed: \(hotels.count) hotels processed and ready to display")
             completion(hotels)
         }
     }

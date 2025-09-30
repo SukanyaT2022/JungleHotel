@@ -6,8 +6,11 @@ import SwiftUI
 import MapKit
 
 struct HotelDetailView: View {
-    let room: Room
-    let hotel: HotelModel
+    var room: Room
+    var hotel: HotelModel
+    
+    @State  var checkInDate: Date = Date()
+    @State  var checkOutDate: Date  = Date()
     
     @Environment(\.dismiss) private var dismiss
     @State private var isFavorite = false
@@ -15,8 +18,12 @@ struct HotelDetailView: View {
     @State private var showingShareSheet = false
     
     // Date picker states
-    @State private var checkInDate = Date()
-    @State private var checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
+    self.room = room
+    self.hotel = hotel
+    self.checkInDate = checkInDate
+    self.checkOutDate = checkOutDate
+    }
     @State private var showingCheckInPicker = false
     @State private var showingCheckOutPicker = false
     

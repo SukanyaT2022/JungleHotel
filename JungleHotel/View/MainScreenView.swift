@@ -6,9 +6,16 @@ import SwiftUI
 //donot forrget to add import swift data
 
 import SwiftData
+//struct is value type pass a to b - it's just a copy  - class is refrence type
 struct MainScreenView: View {
     @StateObject private var viewModel = HotelViewModel()
+    //above becasue HotelViewModel() is class so we use @StateObject --bring from outside
+    //environment like global variable var that use for the whole app
     @Environment(\.modelContext) private var modelContext
+    
+    //@state can use only in this view -- private means use var this view only- for secure noone can access this variable
+    // public private internal and fileprivate -- we call them access modify
+    
     @State private var searchText = ""
     @State private var showingFilterOptions = false
     @State private var isOnline: Bool = true
@@ -40,6 +47,7 @@ struct MainScreenView: View {
                         }
                     }
                 }
+             
                 
             }//close screlol view
             
@@ -50,6 +58,7 @@ struct MainScreenView: View {
                 Task { await loadData() }
             }
         }
+        .background(Color.clear)
         .navigationBarHidden(true)
         .fullScreenCover(isPresented: $showingFilterOptions) {
             FilterOptionsView(
@@ -60,7 +69,9 @@ struct MainScreenView: View {
             )
         }
         .refreshable {
-            viewModel.fetchHotels()
+            // Real-time listener handles updates automatically
+            // Just trigger a manual refresh if needed
+            await loadData()
         }
     }
     
@@ -185,6 +196,7 @@ struct MainScreenView: View {
                 message: viewModel.errorMessage,
                 onRetry: {
                     //if user tap on retry button after show error -  it try to fetch data again
+                    print("🔄 MainScreenView: User tapped retry, attempting manual fetch")
                     viewModel.fetchHotels()
                 }
             )
@@ -202,9 +214,12 @@ struct MainScreenView: View {
     
     // MARK: - Hotel List Content
     private var hotelListContent: some View {
-        LazyVStack(spacing: 16) {
-            ForEach(filteredHotels) { hotel in
-                HotelSectionView(hotel: hotel)
+        let hotels = filteredHotels
+        print("🏨 MainScreenView: Rendering hotel list with \(hotels.count) hotels")
+        
+        return LazyVStack(spacing: 16) {
+            ForEach(hotels) { hotel in
+                HotelSectionView(hotel: hotel, checkInDate:checkInDate, checkOutDate: checkOutDate)
             }
             PracticeSwiftData()
         }
@@ -306,6 +321,7 @@ struct MainScreenView: View {
     private var filteredHotels: [HotelModel] {
         // Start with search results
         var hotels = viewModel.searchHotels(with: searchText)
+        print("🔍 MainScreenView: filteredHotels called, found \(hotels.count) hotels after search")
         
         // Apply price filter
         hotels = hotels.compactMap { hotel in
@@ -401,10 +417,11 @@ struct MainScreenView: View {
         updateOnlineStatus()
 
         if isOnline {
-            // Online: fetch from Firebase and persist to SwiftData
-            await viewModel.fetchHotels()
-            // Persist to SwiftData for offline use
-            viewModel.saveHotelsToSwiftData(context: modelContext)
+            // Online: Real-time listener is already set up in viewModel init
+            // Just persist to SwiftData for offline use when data arrives
+            if !viewModel.hotels.isEmpty {
+                viewModel.saveHotelsToSwiftData(context: modelContext)
+            }
         } else {
             // Offline: load from SwiftData
             viewModel.loadHotelsFromSwiftData(context: modelContext)
@@ -421,6 +438,8 @@ struct MainScreenView: View {
 // MARK: - Hotel Section View
 struct HotelSectionView: View {
     let hotel: HotelModel
+    let checkInDate: Date
+    let checkOutDate: Date
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -447,7 +466,7 @@ struct HotelSectionView: View {
     
     private var roomsList: some View {
         ForEach(hotel.roomObj) { room in
-            NavigationLink(destination: HotelDetailView(room: room, hotel: hotel)) {
+            NavigationLink(destination: HotelDetailView(room: room, hotel: hotel, checkInDate: checkInDate, checkOutDate: checkOutDate  )) {
                 HotelCardView(
                     room: room,
                     hotelName: hotel.hotelNameType
