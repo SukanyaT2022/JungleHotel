@@ -9,21 +9,22 @@ struct HotelDetailView: View {
     var room: Room
     var hotel: HotelModel
     
-    @State  var checkInDate: Date = Date()
-    @State  var checkOutDate: Date  = Date()
+//    below line help to connect first screen date pickr and second detail screen
+    @State  var checkInDateSecond: Date
+    @State  var checkOutDateSecond: Date
     
     @Environment(\.dismiss) private var dismiss
     @State private var isFavorite = false
     @State private var currentImageIndex = 0
     @State private var showingShareSheet = false
     
-    // Date picker states
-init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
-    self.room = room
-    self.hotel = hotel
-    self.checkInDate = checkInDate
-    self.checkOutDate = checkOutDate
-    }
+    // Date picker states-- change name of variable 
+//init (room: Room, hotel: HotelModel, checkInDateSecond: Date, checkOutDateSecond: Date) {
+//    self.room = room
+//    self.hotel = hotel
+//    self.checkInDateSecond = checkInDateSecond
+//    self.checkOutDateSecond = checkOutDateSecond
+//    }
     @State private var showingCheckInPicker = false
     @State private var showingCheckOutPicker = false
     
@@ -34,10 +35,10 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
         PropertyHighlight(icon: "mountain.2.fill", title: "Views", subtitle: "Sea view, Balcony, View, Garden view")
     ]
     
-    init(room: Room = HotelModel.sampleHotel.roomObj[0], hotel: HotelModel = HotelModel.sampleHotel) {
-        self.room = room
-        self.hotel = hotel
-    }
+//    init(room: Room = HotelModel.sampleHotel.roomObj[0], hotel: HotelModel = HotelModel.sampleHotel) {
+//        self.room = room
+//        self.hotel = hotel
+//    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -455,7 +456,7 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
                                 .foregroundColor(.blue)
                                 .font(.system(size: 18))
                             
-                            Text(checkInDate, style: .date)
+                            Text(checkInDateSecond, style: .date)
                                 .font(.system(size: 16))
                                 .foregroundColor(.primary)
                             
@@ -474,13 +475,13 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
                     .buttonStyle(PlainButtonStyle())
                     
                     if showingCheckInPicker {
-                        DatePicker("", selection: $checkInDate, in: Date()..., displayedComponents: .date)
+                        DatePicker("", selection: $checkInDateSecond, in: Date()..., displayedComponents: .date)
                             .datePickerStyle(GraphicalDatePickerStyle())
                             .padding(.horizontal, 8)
-                            .onChange(of: checkInDate) { oldValue, newValue in
+                            .onChange(of: checkInDateSecond) { oldValue, newValue in
                                 // Ensure check-out is at least 1 day after check-in
-                                if checkOutDate <= newValue {
-                                    checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newValue) ?? newValue
+                                if checkOutDateSecond <= newValue {
+                                    checkOutDateSecond = Calendar.current.date(byAdding: .day, value: 1, to: newValue) ?? newValue
                                 }
                                 showingCheckInPicker = false
                             }
@@ -501,7 +502,7 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
                                 .foregroundColor(.blue)
                                 .font(.system(size: 18))
                             
-                            Text(checkOutDate, style: .date)
+                            Text(checkOutDateSecond, style: .date)
                                 .font(.system(size: 16))
                                 .foregroundColor(.primary)
                             
@@ -520,10 +521,10 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
                     .buttonStyle(PlainButtonStyle())
                     
                     if showingCheckOutPicker {
-                        DatePicker("", selection: $checkOutDate, in: Calendar.current.date(byAdding: .day, value: 1, to: checkInDate)!..., displayedComponents: .date)
+                        DatePicker("", selection: $checkOutDateSecond, in: Calendar.current.date(byAdding: .day, value: 1, to: checkInDateSecond)!..., displayedComponents: .date)
                             .datePickerStyle(GraphicalDatePickerStyle())
                             .padding(.horizontal, 8)
-                            .onChange(of: checkOutDate) { oldValue, newValue in
+                            .onChange(of: checkOutDateSecond) { oldValue, newValue in
                                 showingCheckOutPicker = false
                             }
                     }
@@ -557,8 +558,8 @@ init (room: Room, hotel: HotelModel, checkInDate: Date, checkOutDate: Date) {
     // MARK: - Computed Properties
     private var numberOfNights: Int {
         let calendar = Calendar.current
-        let startOfCheckIn = calendar.startOfDay(for: checkInDate)
-        let startOfCheckOut = calendar.startOfDay(for: checkOutDate)
+        let startOfCheckIn = calendar.startOfDay(for: checkInDateSecond)
+        let startOfCheckOut = calendar.startOfDay(for: checkOutDateSecond)
         let components = calendar.dateComponents([.day], from: startOfCheckIn, to: startOfCheckOut)
         return max(components.day ?? 1, 1)
     }
@@ -619,9 +620,9 @@ struct PropertyHighlightRow: View {
         }
     }
 }
-
-#Preview {
-    NavigationView {
-        HotelDetailView()
-    }
-}
+//
+//#Preview {
+//    NavigationView {
+//        HotelDetailView()
+//    }
+//}

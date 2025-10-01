@@ -466,7 +466,7 @@ struct HotelSectionView: View {
     
     private var roomsList: some View {
         ForEach(hotel.roomObj) { room in
-            NavigationLink(destination: HotelDetailView(room: room, hotel: hotel, checkInDate: checkInDate, checkOutDate: checkOutDate  )) {
+            NavigationLink(destination: HotelDetailView(room: room, hotel: hotel, checkInDateSecond: checkInDate, checkOutDateSecond: checkOutDate  )) {
                 HotelCardView(
                     room: room,
                     hotelName: hotel.hotelNameType
