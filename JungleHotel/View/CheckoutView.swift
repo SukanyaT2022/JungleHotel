@@ -8,7 +8,9 @@ import SwiftUI
 
 struct  CheckoutView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Image(uiImage: UIImage(named: "beach") ?? UIImage(systemName: "beach.umbrella")!)
+            .resizable()
+            .frame(width: UIScreen.main.bounds.width, height: 300)
     }
 }
 
