@@ -30,6 +30,16 @@ struct MainScreenView: View {
     @State private var checkInDate = Date()
     @State private var checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
     
+    // Guest selection states
+    @State private var numberOfRooms = 1
+    @State private var numberOfAdults = 2
+    @State private var numberOfChildren = 0
+    @State private var showingGuestPicker = false
+    
+    // Date picker states
+    @State private var showingCheckInPicker = false
+    @State private var showingCheckOutPicker = false
+    
     var body: some View {
         NavigationStack {
             
@@ -38,7 +48,7 @@ struct MainScreenView: View {
                     ZStack(alignment: .top) {
                         // Background content that can scroll
                         contentView
-                            .padding(.top, 80) // Add padding to account for sticky header
+                            .padding(.top, 210) // move the card view down from input box- on the main view- Add padding to account for sticky header
                         
                         // Sticky header
                         VStack(spacing: 0) {
@@ -68,6 +78,35 @@ struct MainScreenView: View {
                 selectedRoomTypes: $selectedRoomTypes
             )
         }
+        .sheet(isPresented: $showingGuestPicker) {
+            GuestPickerView(
+                numberOfRooms: $numberOfRooms,
+                numberOfAdults: $numberOfAdults,
+                numberOfChildren: $numberOfChildren
+            )
+        }
+        .sheet(isPresented: $showingCheckInPicker) {
+            DatePickerView(
+                selectedDate: $checkInDate,
+                title: "Check-in Date",
+                minimumDate: Date()
+            ) { newDate in
+                checkInDate = newDate
+                // Ensure check-out is at least 1 day after check-in
+                if checkOutDate <= newDate {
+                    checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newDate) ?? newDate
+                }
+            }
+        }
+        .sheet(isPresented: $showingCheckOutPicker) {
+            DatePickerView(
+                selectedDate: $checkOutDate,
+                title: "Check-out Date",
+                minimumDate: Calendar.current.date(byAdding: .day, value: 1, to: checkInDate) ?? checkInDate
+            ) { newDate in
+                checkOutDate = newDate
+            }
+        }
         .refreshable {
             // Real-time listener handles updates automatically
             // Just trigger a manual refresh if needed
@@ -89,11 +128,11 @@ struct MainScreenView: View {
             .padding(.horizontal, 16)
             .padding(.top, 8)
             
-            // Pinterest-style search bar
-            pinterestSearchBar
+            // Custom search bar
+            customSearchBar
             
-            // Native date pickers
-            nativeDatePickerSection
+            // Custom date and guest picker
+            customDateGuestPicker
                 .padding(.bottom, 12)
         }
         .background(
@@ -106,7 +145,119 @@ struct MainScreenView: View {
         }
     }
     
-    // MARK: - Edge-to-Edge Search Bar
+    // MARK: - Custom Search Bar
+    private var customSearchBar: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+                .font(.system(size: 18, weight: .medium))
+            
+            TextField("Where would you like to go?", text: $searchText)
+                .font(.system(size: 14))
+                .foregroundColor(.primary)
+                .textFieldStyle(PlainTextFieldStyle())
+            
+            Spacer()
+            
+            // Navigation arrow
+            Image(systemName: "location.fill")
+                .foregroundColor(.black)
+                .font(.system(size: 18, weight: .medium))
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(Color(.systemGray6))
+        .cornerRadius(40)
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Custom Date and Guest Picker
+    private var customDateGuestPicker: some View {
+        VStack(spacing: 12) {
+            // Date selection row
+            HStack(spacing: 12) {
+                // Check-in date
+                Button(action: {
+                    showingCheckInPicker.toggle()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.black)
+                            .font(.system(size: 18, weight: .medium))
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(dayFormatter.string(from: checkInDate))
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.black)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(40)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Check-out date
+                Button(action: {
+                    showingCheckOutPicker.toggle()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.black)
+                            .font(.system(size: 18, weight: .medium))
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(dayFormatter.string(from: checkOutDate))
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.black)
+                        }
+                        
+
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(40)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // Guest selection row
+            Button(action: {
+                showingGuestPicker.toggle()
+            }) {
+                HStack(spacing: 12) {
+                    Image(systemName: "person.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: 18, weight: .medium))
+                    
+                    Text("\(numberOfRooms) room \(numberOfAdults) adults \(numberOfChildren) children")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background(Color(.systemGray6))
+                .cornerRadius(40)
+            }
+            .buttonStyle(PlainButtonStyle())
+        }
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Date Formatter
+    private var dayFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E, MMM d"
+        return formatter
+    }
+    
+    // MARK: - Edge-to-Edge Search Bar (Old)
     private var pinterestSearchBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
@@ -132,25 +283,7 @@ struct MainScreenView: View {
                     }
                 }
                 
-                // Microphone icon
-                Button(action: {
-                    // Add microphone functionality here
-                    print("Microphone tapped")
-                }) {
-                    Image(systemName: "mic.fill")
-                        .foregroundColor(.black)
-                        .font(.system(size: 16, weight: .medium))
-                }
-                
-                // Camera icon
-                Button(action: {
-                    // Add camera functionality here
-                    print("Camera tapped")
-                }) {
-                    Image(systemName: "camera.fill")
-                        .foregroundColor(.black)
-                        .font(.system(size: 16, weight: .medium))
-                }
+              
             }
         }
         .padding(.horizontal, 16)
@@ -202,6 +335,7 @@ struct MainScreenView: View {
             )
         } else {
             hotelListContent
+                .padding(.top,16)
             
         }
     }
@@ -224,7 +358,7 @@ struct MainScreenView: View {
             PracticeSwiftData()
         }
         .padding(.horizontal, 16)
-        .padding(.top, 8)
+        .padding(.top,8)
         .scrollIndicators(.hidden)
     }
  
@@ -246,16 +380,17 @@ struct MainScreenView: View {
             let endDate = calendar.date(byAdding: .year, value: 2, to: startDate) ?? startDate
             return startDate...endDate
         }()
-        
-         return VStack(spacing: 12) {
+        //parent date picker
+        return VStack(alignment: . center, spacing: 12) {
              // Check-in and Check-out side by side
+          
              HStack(spacing: 20) {
                  // Check-in DatePicker
                  VStack(alignment: .leading, spacing: 4) {
-                     Text("Check-in")
-                         .font(.system(size: 14, weight: .medium))
-                         .foregroundColor(.secondary)
-                     
+//                     Text("Check-in")
+//                         .font(.system(size: 14, weight: .medium))
+//                         .foregroundColor(.secondary)
+//                     
                      DatePicker(
                          "",
                          selection: $checkInDate,
@@ -263,21 +398,23 @@ struct MainScreenView: View {
                          displayedComponents: [.date]
                      )
                      .datePickerStyle(.compact)
+                     
                      .onChange(of: checkInDate) { oldValue, newValue in
                          // Ensure check-out is at least 1 day after check-in
                          if checkOutDate <= newValue {
                              checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newValue) ?? newValue
                          }
                      }
+                     .frame(height: 64)
                  }
-                 .frame(maxWidth: .infinity, alignment: .leading)
+                
                  
                  // Check-out DatePicker
                  VStack(alignment: .leading, spacing: 4) {
-                     Text("Check-out")
-                         .font(.system(size: 14, weight: .medium))
-                         .foregroundColor(.secondary)
-                     
+//                     Text("Check-out")
+//                         .font(.system(size: 14, weight: .medium))
+//                         .foregroundColor(.secondary)
+//                     
                      DatePicker(
                          "",
                          selection: $checkOutDate,
@@ -286,10 +423,10 @@ struct MainScreenView: View {
                      )
                      .datePickerStyle(.compact)
                  }
-                 .frame(maxWidth: .infinity, alignment: .leading)
+                 .frame(maxWidth: .infinity, alignment: .trailing)
              }
              
-             // Duration display
+//              Duration display
              HStack {
                  Text("Duration:")
                      .font(.system(size: 14, weight: .medium))
@@ -303,10 +440,10 @@ struct MainScreenView: View {
              }
          }
          .padding(.horizontal, 16)
-         .padding(.vertical, 12)
+         .padding(.vertical, 14)
          .background(Color(.systemGray6))
          .cornerRadius(12)
-         .padding(.horizontal, 16)
+
     }
     
     // MARK: - Computed Properties
@@ -443,27 +580,30 @@ struct HotelSectionView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            hotelHeader
+//            hotelHeader
             roomsList
+               
         }
         .padding(.vertical, 8)
+        
+        
     }
     
-    private var hotelHeader: some View {
-        HStack {
-            Text(hotel.hotelNameType)
-                .font(.title)
-                .fontWeight(.bold)
-            
-            Spacer()
-            
-            //            Text("\(hotel.roomObj.count) rooms")
-            //                .font(.caption)
-            //                .foregroundColor(.secondary)
-        }
-        .padding(.horizontal)
-    }
-    
+//    private var hotelHeader: some View {
+//        HStack {
+//            Text(hotel.hotelNameType)
+//                .font(.title)
+//                .fontWeight(.bold)
+//            
+//            Spacer()
+//            
+//            //            Text("\(hotel.roomObj.count) rooms")
+//            //                .font(.caption)
+//            //                .foregroundColor(.secondary)
+//        }
+//        .padding(.horizontal)
+//    }
+//    
     private var roomsList: some View {
         ForEach(hotel.roomObj) { room in
             NavigationLink(destination: HotelDetailView(room: room, hotel: hotel, checkInDateSecond: checkInDate, checkOutDateSecond: checkOutDate  )) {
@@ -471,6 +611,8 @@ struct HotelSectionView: View {
                     room: room,
                     hotelName: hotel.hotelNameType
                 )
+              
+               
             }
             .buttonStyle(PlainButtonStyle())
         }
@@ -486,7 +628,7 @@ struct ErrorView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
-                .foregroundColor(.red)
+              
             
             Text("Error Loading Hotels")
                 .font(.headline)
@@ -776,6 +918,202 @@ struct RangeSlider: View {
         .frame(height: 20)
     }
     
+}
+
+// MARK: - Custom Date Picker View
+struct DatePickerView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var selectedDate: Date
+    let title: String
+    let minimumDate: Date
+    let onDateSelected: (Date) -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                DatePicker(
+                    "",
+                    selection: $selectedDate,
+                    in: minimumDate...,
+                    displayedComponents: [.date]
+                )
+                .datePickerStyle(.graphical)
+                .padding()
+                
+                Spacer()
+                
+                Button("Done") {
+                    onDateSelected(selectedDate)
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .padding()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Guest Picker View
+struct GuestPickerView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var numberOfRooms: Int
+    @Binding var numberOfAdults: Int
+    @Binding var numberOfChildren: Int
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 30) {
+                VStack(spacing: 20) {
+                    // Rooms
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Rooms")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("How many rooms do you need?")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                if numberOfRooms > 1 {
+                                    numberOfRooms -= 1
+                                }
+                            }) {
+                                Image(systemName: "minus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(numberOfRooms > 1 ? .blue : .gray)
+                            }
+                            .disabled(numberOfRooms <= 1)
+                            
+                            Text("\(numberOfRooms)")
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(minWidth: 30)
+                            
+                            Button(action: {
+                                numberOfRooms += 1
+                            }) {
+                                Image(systemName: "plus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // Adults
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Adults")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("Ages 13 or above")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                if numberOfAdults > 1 {
+                                    numberOfAdults -= 1
+                                }
+                            }) {
+                                Image(systemName: "minus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(numberOfAdults > 1 ? .blue : .gray)
+                            }
+                            .disabled(numberOfAdults <= 1)
+                            
+                            Text("\(numberOfAdults)")
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(minWidth: 30)
+                            
+                            Button(action: {
+                                numberOfAdults += 1
+                            }) {
+                                Image(systemName: "plus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    // Children
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Children")
+                                .font(.system(size: 18, weight: .semibold))
+                            Text("Ages 2-12")
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                if numberOfChildren > 0 {
+                                    numberOfChildren -= 1
+                                }
+                            }) {
+                                Image(systemName: "minus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(numberOfChildren > 0 ? .blue : .gray)
+                            }
+                            .disabled(numberOfChildren <= 0)
+                            
+                            Text("\(numberOfChildren)")
+                                .font(.system(size: 18, weight: .semibold))
+                                .frame(minWidth: 30)
+                            
+                            Button(action: {
+                                numberOfChildren += 1
+                            }) {
+                                Image(systemName: "plus.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer()
+                
+                Button("Done") {
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .padding()
+            }
+            .navigationTitle("Guests")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
 }
 
 #Preview {

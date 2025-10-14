@@ -16,6 +16,16 @@ struct HotelCardView: View {
             // Room Images Carousel
             ImageCarouselView(images: room.roomImage)
                 .frame(height: 200)
+             
+                .clipShape(
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 12,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: 12
+                    )
+                )
+             
             
             // Room Details
             VStack(alignment: .leading, spacing: 8) {

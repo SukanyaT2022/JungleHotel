@@ -572,7 +572,7 @@ struct HotelDetailView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Color.blue)
+              
                 .cornerRadius(12)
         }
         .padding(.top, 20)
