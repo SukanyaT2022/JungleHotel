@@ -1,4 +1,3 @@
-
 //  Created by TS2 on 8/26/25.
 //
 
@@ -17,6 +16,7 @@ struct HotelDetailView: View {
     @State private var isFavorite = false
     @State private var currentImageIndex = 0
     @State private var showingShareSheet = false
+    @State private var navigateToPayment = false
     
     // Date picker states-- change name of variable 
 //init (room: Room, hotel: HotelModel, checkInDateSecond: Date, checkOutDateSecond: Date) {
@@ -41,65 +41,69 @@ struct HotelDetailView: View {
 //    }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                // Main content
-                ScrollView {
+        NavigationStack {
+            
+            
+            GeometryReader { geometry in
+                ZStack(alignment: .top) {
+                    // Main content
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // Image Gallery with top padding to push below navigation
+                            imageGallerySection(geometry: geometry)
+                                .padding(.top, 140) // Push image gallery below sticky navigation and room header
+                            
+                            // Content Section
+                            VStack(alignment: .leading, spacing: 20) {
+                                // Hotel name
+                                hotelNameSection
+                                
+                                // Property highlights
+                                propertyHighlightsSection
+                                
+                                // Contact information section
+                                contactInformationSection
+                                
+                                // Map section
+                                mapSection
+                                
+                                // Check-in/Check-out section
+                                checkInOutSection
+                                
+                                // Book button
+                                bookingButton
+                                
+                                Spacer(minLength: 100)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 20)
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                    .ignoresSafeArea(.all, edges: .top)
+                    
+                    // Sticky navigation and room header
                     VStack(spacing: 0) {
-                        // Image Gallery with top padding to push below navigation
-                        imageGallerySection(geometry: geometry)
-                            .padding(.top, 140) // Push image gallery below sticky navigation and room header
+                        // Navigation icons
+                        navigationIconsSection
+                            .padding(.horizontal, 16)
+                            .padding(.top, 10) // Minimal space above navigation bar
+                            .padding(.bottom, 0)
+                            .background(Color.white)
+                        //                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 2)
                         
-                        // Content Section
-                        VStack(alignment: .leading, spacing: 20) {
-                            // Hotel name
-                            hotelNameSection
-                            
-                            // Property highlights
-                            propertyHighlightsSection
-                            
-                            // Contact information section
-                            contactInformationSection
-                            
-                            // Map section
-                            mapSection
-                            
-                            // Check-in/Check-out section
-                            checkInOutSection
-                            
-                            // Book button
-                            bookingButton
-                            
-                            Spacer(minLength: 100)
+                        // Room name and rating - sticky below navigation
+                        VStack(alignment: .leading, spacing: 8) {
+                            roomHeaderSection
                         }
                         .padding(.horizontal, 16)
-                        .padding(.top, 20)
-                    }
-                }
-                .scrollIndicators(.hidden)
-                .ignoresSafeArea(.all, edges: .top)
-                
-                // Sticky navigation and room header
-                VStack(spacing: 0) {
-                    // Navigation icons
-                    navigationIconsSection
-                        .padding(.horizontal, 16)
-                        .padding(.top, 10) // Minimal space above navigation bar
-                        .padding(.bottom, 0)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.white)
-//                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 2)
-                    
-                    // Room name and rating - sticky below navigation
-                    VStack(alignment: .leading, spacing: 8) {
-                        roomHeaderSection
+                        .shadow(color: .black.opacity(0.05), radius: 1, x: 0, y: 1)
+                        
+                        Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.white)
-                    .shadow(color: .black.opacity(0.05), radius: 1, x: 0, y: 1)
-                    
-                    Spacer()
                 }
             }
         }
@@ -550,6 +554,20 @@ struct HotelDetailView: View {
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top, 8)
+                    
+                    // Hidden NavigationLink driven by state
+                    NavigationLink(
+                        destination: PaymentView(checkinDatePayment: checkInDateSecond, checkoutDatePayment: checkOutDateSecond),
+                        isActive: $navigateToPayment
+                    ) {
+                        EmptyView()
+                    }
+                    .hidden()
+                    
+                    ButtonCompView(textBtn: "Next:Final Step") {
+                        // Trigger navigation when button is tapped
+                        navigateToPayment = true
+                    }
                 }
             }
         }
@@ -565,7 +583,7 @@ struct HotelDetailView: View {
     }
     
     // MARK: - Booking Button
-    private var bookingButton: some View {
+  var bookingButton: some View {
         NavigationLink(destination: CheckoutView()) {
             Text("See your options")
                 .font(.system(size: 18, weight: .semibold))
@@ -577,7 +595,8 @@ struct HotelDetailView: View {
         }
         .padding(.top, 20)
     }
-}
+    }
+
 
 // MARK: - Map Location Model
 struct MapLocation: Identifiable {
@@ -619,10 +638,12 @@ struct PropertyHighlightRow: View {
             Spacer()
         }
     }
-}
+}//
+
 //
 //#Preview {
 //    NavigationView {
 //        HotelDetailView()
 //    }
 //}
+

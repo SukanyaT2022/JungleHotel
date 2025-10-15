@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct PaymentView: View {
+    var checkinDatePayment: Date
+    var checkoutDatePayment: Date
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Payment Details")
+        smallBoxComp(title: "Jungle Hotel", text:"Date check in and out")
+    
     }
 }
 
 #Preview {
-    PaymentView()
+    PaymentView(checkinDatePayment: Date(), checkoutDatePayment: Date())
 }
