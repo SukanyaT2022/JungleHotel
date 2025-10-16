@@ -10,7 +10,7 @@ import SwiftUI
 struct smallBoxComp: View {
     let title: String
     let text: String
-    
+    let bgColor: Color 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
@@ -23,7 +23,7 @@ struct smallBoxComp: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
+        .background(bgColor)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.gray, lineWidth: 1)
