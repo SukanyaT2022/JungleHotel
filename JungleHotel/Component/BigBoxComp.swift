@@ -13,17 +13,30 @@ struct BigBoxComp: View {
     let bottomText: String
     let bottomValue: String
     let bgColor: Color
-    
+    let paymentCondition: String
+    @State private var radioBtnSelected: Bool = false
+    @State private var radioBtnSelectedBelow: Bool = false
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0, ) {
+            Text(topTitle)
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.leading, 24)
+                
             // Top Section
             HStack {
-                Text(topTitle)
-                    .font(.headline)
-                    .foregroundColor(.primary)
+             
+                if !paymentCondition.isEmpty {
+                    RadioButtonView(title: paymentCondition, isSelected: radioBtnSelected) {
+                        radioBtnSelected.toggle()
+                    
+                    }//end close radioBttinView
+                    
+                }
+               
                 
                 Spacer()
-                
+                //pay later pay now text
                 Text(topValue)
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -32,29 +45,50 @@ struct BigBoxComp: View {
             .padding(16)
             .background(Color.white)
             
-            Divider()
+//            Divider()
+//                .frame(height: 4)
+//                .background(Color.red)
+//                .padding(.vertical, 8)
+            //divider() is line between 2 box
             
             // Bottom Section
            HStack(alignment: .center, spacing: 12) {
-                Text(bottomText)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-               Spacer()
+               VStack(alignment: .leading, spacing: 0) {
+                   //radio button
+                   if !paymentCondition.isEmpty {
+                       RadioButtonView(title: paymentCondition, isSelected: radioBtnSelectedBelow) {
+                           radioBtnSelectedBelow.toggle()
+                       
+                       }
+                       .padding(.bottom, 8)
+                       
+                   }//closing if
+                    Text(bottomText)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+               }
+              
+              
                Text(bottomValue)
                    .font(.subheadline)
                    .foregroundColor(.secondary)
                    .lineLimit(nil)
                    .fixedSize(horizontal: false, vertical: true)
-            }
+            }//close hstack
+            
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(bgColor)
-        }
+            .cornerRadius(20)
+            //end h stcak prop
+         
+        }//vstack closing
+        .padding(10)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .stroke(Color.black.opacity(0.3), lineWidth: 1.5)
         )
         .cornerRadius(20)
     }
@@ -65,9 +99,10 @@ struct BigBoxComp: View {
         BigBoxComp(
             topTitle: "Room price (1 room x 7 nights)",
             topValue: "฿ 10,818.30",
-            bottomText: "You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms",
+            bottomText: "You will be charged on 16  these terms",
             bottomValue: "฿ 10,818.30",
-            bgColor: Color(.systemGray6)
+            bgColor: Color(.systemGray6),
+            paymentCondition: "Pay later available"
         )
     }
     .padding()
