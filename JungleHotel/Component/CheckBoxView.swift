@@ -9,11 +9,12 @@ import SwiftUI
 
 struct CheckBoxView: View {
     let text: String
-    let isChecked: Bool
+    @Binding var isChecked: Bool
     var action: () -> Void
     
     var body: some View {
         Button(action: {
+            isChecked.toggle()
             action()
         }) {
             HStack(alignment: .top, spacing: 12) {
@@ -22,12 +23,12 @@ struct CheckBoxView: View {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(isChecked ? Color.blue : Color.gray, lineWidth: 2)
                         .frame(width: 24, height: 24)
-                    
+
                     if isChecked {
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: 2)
                             .fill(Color.blue)
                             .frame(width: 24, height: 24)
-                        
+
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
@@ -36,13 +37,21 @@ struct CheckBoxView: View {
                 
                 // Text
                 Text(text)
-                    .font(.body)
+                    .font(ThemeFont.smallText)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .buttonStyle(.plain)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.gray, lineWidth: 1)
+        )
+        .cornerRadius(20)
     }
 }
 
@@ -50,15 +59,16 @@ struct CheckBoxView: View {
     VStack(spacing: 20) {
         CheckBoxView(
             text: "I agree to receive updates and promotions about Agoda and its affiliates or business partners via various channels, including WhatsApp. Opt out anytime. Read more in the Privacy Policy.",
-            isChecked: true,
+            isChecked: .constant(true),
+            action: {}
+        )
+
+        CheckBoxView(
+            text: "Send me promotional emails",
+            isChecked: .constant(false),
             action: {}
         )
         
-        CheckBoxView(
-            text: "Send me promotional emails",
-            isChecked: false,
-            action: {}
-        )
     }
     .padding()
 }

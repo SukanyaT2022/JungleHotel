@@ -31,10 +31,8 @@ struct BigBoxComp: View {
                         radioBtnSelected.toggle()
                     
                     }//end close radioBttinView
-                    
                 }
                
-                
                 Spacer()
                 //pay later pay now text
                 Text(topValue)

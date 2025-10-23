@@ -16,7 +16,7 @@ struct PaymentCompView: View {
            RadioButtonView(title: "Credit/debit card", isSelected: false) {
                
            }
-           PaymentCompView()
+     
            // input box
            Divider()
            RadioButtonView(title: "Digital payment", isSelected: false) {

@@ -11,9 +11,10 @@ struct PaymentView: View {
     var checkinDatePayment: Date
     var checkoutDatePayment: Date
     @State private var radioBtnSelected: Bool = false
+    @State private var isPromotionsChecked: Bool = true
     var body: some View {
         ScrollView{
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 20) {
                 Text("Payment Details")
                     .font(.title)
                     .fontWeight(.bold)
@@ -42,11 +43,25 @@ struct PaymentView: View {
                     bgColor: Color(hex: "#F5F5F5"),
                     paymentCondition: "Pay Now"
                 )
-              
+                
+                CheckBoxView(
+                    text: "I agree receive update and promotions about Jungle Hotel.",
+                    isChecked: $isPromotionsChecked,
+                   
+                ) {
+                    
+                }
+                
+                ButtonCompView(textBtn: "Book Now",action: {
+                 
+                } )
+
                 
             }// end vstack
-            .padding()
+            .padding(10)
         }
+        .scrollIndicators(.hidden)
+        // hide scroll bar from scrool view
         
     }
 }

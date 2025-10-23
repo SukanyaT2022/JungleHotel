@@ -103,12 +103,12 @@ struct HotelDetailView: View {
                         .shadow(color: .black.opacity(0.05), radius: 1, x: 0, y: 1)
                         
                         Spacer()
-                    }
+                    }//close v stack
                 }
             }
         }
         .navigationBarHidden(true)
-    }
+    }// close body
     
     // MARK: - Navigation Icons Section
     private var navigationIconsSection: some View {
