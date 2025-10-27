@@ -14,6 +14,7 @@ struct BigBoxComp: View {
     let bottomValue: String
     let bgColor: Color
     let paymentCondition: String
+    let paymentConditionBelow: String
     @State private var radioBtnSelected: Bool = false
     @State private var radioBtnSelectedBelow: Bool = false
     var body: some View {
@@ -53,8 +54,8 @@ struct BigBoxComp: View {
            HStack(alignment: .center, spacing: 12) {
                VStack(alignment: .leading, spacing: 0) {
                    //radio button
-                   if !paymentCondition.isEmpty {
-                       RadioButtonView(title: paymentCondition, isSelected: radioBtnSelectedBelow) {
+                   if !paymentConditionBelow.isEmpty {
+                       RadioButtonView(title: paymentConditionBelow, isSelected: radioBtnSelectedBelow) {
                            radioBtnSelectedBelow.toggle()
                        
                        }
@@ -100,7 +101,7 @@ struct BigBoxComp: View {
             bottomText: "You will be charged on 16  these terms",
             bottomValue: "฿ 10,818.30",
             bgColor: Color(.systemGray6),
-            paymentCondition: "Pay later available"
+            paymentCondition: "Pay Now", paymentConditionBelow: "Pay Later"
         )
     }
     .padding()

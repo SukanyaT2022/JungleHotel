@@ -72,11 +72,10 @@ struct HotelDetailView: View {
                                 
                                 // Book button
                                 bookingButton
-                                
-                                Spacer(minLength: 100)
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 20)
+                            .padding(.bottom, 40)
                         }
                     }
                     .scrollIndicators(.hidden)
@@ -101,8 +100,6 @@ struct HotelDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.white)
                         .shadow(color: .black.opacity(0.05), radius: 1, x: 0, y: 1)
-                        
-                        Spacer()
                     }//close v stack
                 }
             }
@@ -535,7 +532,7 @@ struct HotelDetailView: View {
                 }
                 
                 // Stay duration and info
-                VStack(spacing: 8) {
+                VStack(spacing: 12) {
                     HStack {
                         Text("Duration:")
                             .font(.system(size: 14, weight: .medium))
@@ -553,21 +550,13 @@ struct HotelDetailView: View {
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 8)
                     
-                    // Hidden NavigationLink driven by state
-                    NavigationLink(
-                        destination: PaymentView(checkinDatePayment: checkInDateSecond, checkoutDatePayment: checkOutDateSecond),
-                        isActive: $navigateToPayment
-                    ) {
-                        EmptyView()
-                    }
-                    .hidden()
-                    
+                    // Button at bottom with consistent spacing
                     ButtonCompView(textBtn: "Next:Final Step") {
                         // Trigger navigation when button is tapped
                         navigateToPayment = true
                     }
+                    .padding(.top, 8)
                 }
             }
         }
@@ -646,4 +635,5 @@ struct PropertyHighlightRow: View {
 //        HotelDetailView()
 //    }
 //}
+
 
