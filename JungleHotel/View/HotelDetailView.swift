@@ -16,7 +16,7 @@ struct HotelDetailView: View {
     @State private var isFavorite = false
     @State private var currentImageIndex = 0
     @State private var showingShareSheet = false
-    @State private var navigateToPayment = false
+    @State private var navigateToPayment = false// this line for enabe button to navigation
     
     // Date picker states-- change name of variable 
 //init (room: Room, hotel: HotelModel, checkInDateSecond: Date, checkOutDateSecond: Date) {
@@ -553,6 +553,9 @@ struct HotelDetailView: View {
                         // Trigger navigation when button is tapped
                         navigateToPayment = true
                     }
+                    NavigationLink(destination: PaymentView(checkinDatePayment: checkInDateSecond, checkoutDatePayment: checkOutDateSecond), isActive: $navigateToPayment) {
+                     EmptyView()
+                    }
                 }
             }
         }
@@ -575,7 +578,6 @@ struct HotelDetailView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-              
                 .cornerRadius(12)
         }
         .padding(.top, 20)

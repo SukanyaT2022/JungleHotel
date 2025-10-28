@@ -78,9 +78,9 @@
             filePath = "JungleHotel/View/HotelDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "560"
-            endingLineNumber = "560"
-            landmarkName = "checkInOutSection"
+            startingLineNumber = "563"
+            endingLineNumber = "563"
+            landmarkName = "numberOfNights"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>

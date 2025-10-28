@@ -53,12 +53,15 @@ struct PaymentView: View {
                 ) {
                     
                 }
+//    payment method credit card
                 
+                PaymentMethodComp()
+                
+    //submit button
                 ButtonCompView(textBtn: "Book Now",action: {
                  
                 } )
-
-                
+            
             }// end vstack
             .padding(10)
         }
