@@ -69,13 +69,10 @@ struct HotelDetailView: View {
                                 
                                 // Check-in/Check-out section
                                 checkInOutSection
-                                
-                                // Book button
-                                bookingButton
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 20)
-                            .padding(.bottom, 40)
+                            .padding(.bottom, 20)
                         }
                     }
                     .scrollIndicators(.hidden)
@@ -556,7 +553,6 @@ struct HotelDetailView: View {
                         // Trigger navigation when button is tapped
                         navigateToPayment = true
                     }
-                    .padding(.top, 8)
                 }
             }
         }
