@@ -17,6 +17,16 @@ struct BigBoxComp: View {
     let paymentConditionBelow: String
     @State private var radioBtnSelected: Bool = false
     @State private var radioBtnSelectedBelow: Bool = false
+    //we set paynow as default
+    @State private var paymentConditionSelected: PaymentCondition = .payNow
+    enum PaymentCondition: String, CaseIterable, Identifiable {
+        case payNow = "Pay Now"
+        case payLater = "Pay Later"
+        //below make id as same value as id such paynow or paylater not id1, 2, 3
+        var id: String { self.rawValue }
+        //below generate unique id
+//        var id : String {UUID().uuidString}
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 0, ) {
             Text(topTitle)
@@ -28,9 +38,9 @@ struct BigBoxComp: View {
             HStack {
              
                 if !paymentCondition.isEmpty {
-                    RadioButtonView(title: paymentCondition, isSelected: radioBtnSelected) {
+                    RadioButtonView(title: paymentCondition, isSelected: paymentConditionSelected == .payNow) {
                         radioBtnSelected.toggle()
-                    
+                    paymentConditionSelected = .payNow
                     }//end close radioBttinView
                 }
                
@@ -51,13 +61,13 @@ struct BigBoxComp: View {
             //divider() is line between 2 box
             
             // Bottom Section
-           HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                VStack(alignment: .leading, spacing: 0) {
                    //radio button
                    if !paymentConditionBelow.isEmpty {
-                       RadioButtonView(title: paymentConditionBelow, isSelected: radioBtnSelectedBelow) {
+                       RadioButtonView(title: paymentConditionBelow, isSelected: paymentConditionSelected == .payLater) {
                            radioBtnSelectedBelow.toggle()
-                       
+                       paymentConditionSelected = .payLater
                        }
                        .padding(.bottom, 8)
                        
@@ -65,16 +75,22 @@ struct BigBoxComp: View {
                     Text(bottomText)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .lineLimit(1)
+                        .padding(.top,5)
+                       
                }
               
+               VStack{
+                   //pay later
+                   Text(bottomValue)
+                       .font(.headline)
+                       .fontWeight(.semibold)
+                       .foregroundColor(.primary)
+                       .lineLimit(nil)
+                       .fixedSize(horizontal: false, vertical: true)
+                     
+               }
               
-               Text(bottomValue)
-                   .font(.subheadline)
-                   .foregroundColor(.secondary)
-                   .lineLimit(nil)
-                   .fixedSize(horizontal: false, vertical: true)
             }//close hstack
             
             .padding(16)

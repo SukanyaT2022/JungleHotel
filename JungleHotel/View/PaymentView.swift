@@ -26,25 +26,29 @@ struct PaymentView: View {
                 BigBoxComp(
                     topTitle: "Room price",
                     topValue: "10,000",
-                    bottomText: "Service fee:",
-                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms",
+                    
+                    bottomText: "",
+                    bottomValue:"20000",
                     bgColor: Color(hex: "#F5F5F5"),
                     paymentCondition: "Pay Now", paymentConditionBelow: "Pay Later"
                     
                 )
+                smallBoxComp(title: "", text: "Service fee: You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms", bgColor: Color(hex: "#ffffff"))
+                
             
+
                 smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
                 
           
-                //paynow or pay later
-                BigBoxComp(
-                    topTitle: "Room price",
-                    topValue: "10,000",
-                    bottomText: "Service fee:",
-                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total under these terms",
-                    bgColor: Color(hex: "#F5F5F5"), paymentCondition: "Pay Now",
-                    paymentConditionBelow: "Pay Later"
-                )
+            
+//                BigBoxComp(
+//                    topTitle: "Room price",
+//                    topValue: "10,000",
+//                    bottomText: "Service fee:",
+//                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total under these terms",
+//                    bgColor: Color(hex: "#F5F5F5"), paymentCondition: "Pay Now",
+//                    paymentConditionBelow: "Pay Later"
+//                )
                 
                 CheckBoxView(
                     text: "I agree receive update and promotions about Jungle Hotel.",
