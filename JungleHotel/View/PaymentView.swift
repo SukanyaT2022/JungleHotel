@@ -12,6 +12,10 @@ struct PaymentView: View {
     var checkoutDatePayment: Date
     @State private var radioBtnSelected: Bool = false
     @State private var isPromotionsChecked: Bool = true
+    
+    @State  var numNight: Int = 1
+    @State  var pricePerNight: Int64 = 0
+    
     var body: some View {
         ScrollView{
             VStack(alignment: .leading, spacing: 20) {
@@ -25,7 +29,7 @@ struct PaymentView: View {
 
                 BigBoxComp(
                     topTitle: "Room price",
-                    topValue: "10,000",
+                    topValue: "\((pricePerNight * Int64(numNight)).formatted())",
                     
                     bottomText: "",
                     bottomValue:"20000",
@@ -76,6 +80,11 @@ struct PaymentView: View {
 }
 
 #Preview {
-    PaymentView(checkinDatePayment: Date(), checkoutDatePayment: Date())
+    PaymentView(
+        checkinDatePayment: Date(),
+        checkoutDatePayment: Date(),
+        numNight: 2,
+        pricePerNight: 12000
+    )
 }
 

@@ -33,12 +33,16 @@ struct BigBoxComp: View {
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.leading, 24)
+       
                 
             // Top Section
             HStack {
              
                 if !paymentCondition.isEmpty {
-                    RadioButtonView(title: paymentCondition, isSelected: paymentConditionSelected == .payNow) {
+                    RadioButtonView(
+                        title: paymentCondition,
+                        isSelected: paymentConditionSelected == .payNow,
+                        discountText: "Pay now 5% discount") {
                         radioBtnSelected.toggle()
                     paymentConditionSelected = .payNow
                     }//end close radioBttinView
@@ -46,10 +50,15 @@ struct BigBoxComp: View {
                
                 Spacer()
                 //pay later pay now text
-                Text(topValue)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+             VStack(alignment: .leading, spacing: 0) {
+                 Text(topValue)
+                     .font(.headline)
+                     .fontWeight(.semibold)
+                     .foregroundColor(.primary)
+               
+                     
+                }
+                
             }
             .padding(16)
             .background(Color.white)
@@ -65,7 +74,7 @@ struct BigBoxComp: View {
                VStack(alignment: .leading, spacing: 0) {
                    //radio button
                    if !paymentConditionBelow.isEmpty {
-                       RadioButtonView(title: paymentConditionBelow, isSelected: paymentConditionSelected == .payLater) {
+                       RadioButtonView(title: paymentConditionBelow, isSelected: paymentConditionSelected == .payLater, discountText:"") {
                            radioBtnSelectedBelow.toggle()
                        paymentConditionSelected = .payLater
                        }

@@ -10,13 +10,14 @@ import SwiftUI
 struct RadioButtonView: View {
     let title: String
     let isSelected: Bool
+    let discountText: String
     var action: () -> Void
     
     var body: some View {
         Button(action: {
             action()
         }) {
-            HStack(spacing: 12) {
+            HStack(alignment:.top,spacing: 12) {
                 // Radio Circle
                 ZStack {
                     Circle()
@@ -29,11 +30,17 @@ struct RadioButtonView: View {
                             .frame(width: 14, height: 14)
                     }
                 }
+//                end raio circle
                 
                 // Title Text
-                Text(title)
-                    .font(.body)
-                    .foregroundColor(.primary)
+                VStack(alignment: .leading, spacing: 6){
+                    Text(title)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                    Text(discountText)
+                        .font(.caption)
+                }
+               
                 
                 Spacer()
             }
@@ -47,12 +54,14 @@ struct RadioButtonView: View {
         RadioButtonView(
             title: "Pay on 16 November 2025",
             isSelected: true,
+            discountText: "10% off",
             action: {}
         )
         
         RadioButtonView(
             title: "Pay now",
             isSelected: false,
+            discountText: "",
             action: {}
         )
     }

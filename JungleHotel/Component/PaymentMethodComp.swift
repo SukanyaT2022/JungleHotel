@@ -12,6 +12,7 @@ struct PaymentMethodComp: View {
     @State private var cardNumber: String = ""
     @State private var isPromotionChecked: Bool = false
     
+    
     enum PaymentMethod {
         case creditCard
         case digitalPayment
@@ -43,7 +44,7 @@ struct PaymentMethodComp: View {
             VStack(alignment: .leading, spacing: 16) {
                 RadioButtonView(
                     title: "Credit/debit card",
-                    isSelected: selectedPaymentMethod == .creditCard
+                    isSelected: selectedPaymentMethod == .creditCard, discountText: "Pay now 5% off"
                     //.creditcard from enum
                 ) {
                     selectedPaymentMethod = .creditCard
@@ -127,7 +128,7 @@ struct PaymentMethodComp: View {
             VStack(alignment: .leading, spacing: 16) {
                 RadioButtonView(
                     title: "Digital payment",
-                    isSelected: selectedPaymentMethod == .digitalPayment
+                    isSelected: selectedPaymentMethod == .digitalPayment, discountText: ""
                 ) {
                     selectedPaymentMethod = .digitalPayment
                 }
@@ -150,7 +151,7 @@ struct PaymentMethodComp: View {
             VStack(alignment: .leading, spacing: 16) {
                 RadioButtonView(
                     title: "Cypto payment",
-                    isSelected: selectedPaymentMethod == .cyptoCurrency
+                    isSelected: selectedPaymentMethod == .cyptoCurrency, discountText: ""
                 ) {
                     selectedPaymentMethod = .cyptoCurrency
                 }
@@ -205,37 +206,18 @@ struct PaymentMethodComp: View {
                 .buttonStyle(.plain)
                 
                 // Terms and Privacy Policy
-                HStack(spacing: 4) {
+               VStack(spacing: 4) {
                     Text("By proceeding with this booking, I agree to Agoda's")
                         .font(.caption)
                         .foregroundColor(.primary)
-                    
-                    Button(action: {
-                        // Handle Terms of Use
-                    }) {
-                        Text("Terms of Use")
+            
+                        
+                        Text("Terms of Use and Privacy Policy")
                             .font(.caption)
                             .foregroundColor(.blue)
                             .underline()
-                    }
-                    
-                    Text("and")
-                        .font(.caption)
-                        .foregroundColor(.primary)
-                    
-                    Button(action: {
-                        // Handle Privacy Policy
-                    }) {
-                        Text("Privacy Policy")
-                            .font(.caption)
-                            .foregroundColor(.blue)
-                            .underline()
-                    }
-                    
-                    Text(".")
-                        .font(.caption)
-                        .foregroundColor(.primary)
-                }
+                
+                }//close vstack
                 .fixedSize(horizontal: false, vertical: true)
             }
         }

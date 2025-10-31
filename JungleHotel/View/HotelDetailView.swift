@@ -7,6 +7,8 @@ import MapKit
 struct HotelDetailView: View {
     var room: Room
     var hotel: HotelModel
+  
+    @State  var pricePerNightDetail: Int64
     
 //    below line help to connect first screen date pickr and second detail screen
     @State  var checkInDateSecond: Date
@@ -553,8 +555,16 @@ struct HotelDetailView: View {
                         // Trigger navigation when button is tapped
                         navigateToPayment = true
                     }
-                    NavigationLink(destination: PaymentView(checkinDatePayment: checkInDateSecond, checkoutDatePayment: checkOutDateSecond), isActive: $navigateToPayment) {
-                     EmptyView()
+                    NavigationLink(
+                        destination: PaymentView(
+                            checkinDatePayment: checkInDateSecond,
+                            checkoutDatePayment: checkOutDateSecond,
+                            numNight: numberOfNights,
+                            pricePerNight: pricePerNightDetail
+                        ),
+                        isActive: $navigateToPayment
+                    ) {
+                        EmptyView()
                     }
                 }
             }
@@ -633,5 +643,6 @@ struct PropertyHighlightRow: View {
 //        HotelDetailView()
 //    }
 //}
+
 
 
