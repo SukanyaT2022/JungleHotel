@@ -15,7 +15,14 @@ struct PaymentView: View {
     
     @State  var numNight: Int = 1
     @State  var pricePerNight: Int64 = 0
+//    tuple below return 2 value (total,discount)
+    func totalFunc() ->(String,String) {
+       let totalPrice:Int64 = pricePerNight * Int64(numNight)
+        let discountPrice:Int64 = totalPrice - totalPrice * 5 / 100
+        return ("\(totalPrice.formatted())","\(discountPrice.formatted())")
+        
     
+    }
     var body: some View {
         ScrollView{
             VStack(alignment: .leading, spacing: 20) {
@@ -28,11 +35,12 @@ struct PaymentView: View {
                 smallBoxComp(title: "", text: "We price match on all hotels", bgColor: Color(hex: "#BFF4BE"))
 
                 BigBoxComp(
+                    //pay now
                     topTitle: "Room price",
-                    topValue: "\((pricePerNight * Int64(numNight)).formatted())",
-                    
+                    topValue:  totalFunc().1,
+                    //pay later
                     bottomText: "",
-                    bottomValue:"20000",
+                    bottomValue: totalFunc().0,
                     bgColor: Color(hex: "#F5F5F5"),
                     paymentCondition: "Pay Now", paymentConditionBelow: "Pay Later"
                     
