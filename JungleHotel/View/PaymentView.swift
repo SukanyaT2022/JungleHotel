@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PaymentView: View {
+    var hotelModelPayment: HotelModel
+    var roomPayment: Room
     var checkinDatePayment: Date
     var checkoutDatePayment: Date
     @State private var radioBtnSelected: Bool = false
@@ -15,25 +17,59 @@ struct PaymentView: View {
     
     @State  var numNight: Int = 1
     @State  var pricePerNight: Int64 = 0
-//    tuple below return 2 value (total,discount)
+    //    tuple below return 2 value (total,discount)
     func totalFunc() ->(String,String) {
-       let totalPrice:Int64 = pricePerNight * Int64(numNight)
+        let totalPrice:Int64 = pricePerNight * Int64(numNight)
         let discountPrice:Int64 = totalPrice - totalPrice * 5 / 100
         return ("\(totalPrice.formatted())","\(discountPrice.formatted())")
         
-    
+        
     }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
+    }
+    
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    //    private func formatTime(_ date: Date) -> String {
+    //        let formatter = DateFormatter()
+    //        formatter.dateStyle = .none
+    //        formatter.timeStyle = .short
+    //        return formatter.string(from: date)
+    //    }
+    //
     var body: some View {
         ScrollView{
+            
             VStack(alignment: .leading, spacing: 20) {
                 Text("Payment Details")
                     .font(.title)
                     .fontWeight(.bold)
-
-                smallBoxComp(title: "Jungle Hotel", text: "Date check in and out", bgColor: Color.white)
-
-                smallBoxComp(title: "", text: "We price match on all hotels", bgColor: Color(hex: "#BFF4BE"))
-
+                CheckinCompView(
+                    checkInDate: formatDate(checkinDatePayment),
+                    checkOutDate: formatDate(checkoutDatePayment),
+                    nights: numNight)
+                
+                //                smallBoxComp(title: "Jungle Hotel", text: "Date check in and out", bgColor: Color.white)
+                //
+                //                smallBoxComp(title: "", text: "We price match on all hotels", bgColor: Color(hex: "#BFF4BE"))
+                HotelSummaryCompView(
+                    hotelImage: roomPayment.roomImage.first ?? "",
+                    hotelName: roomPayment.roomName,
+                    rating: Int(roomPayment.roomRating),
+                    reviewScore: 0.0,
+                    reviewCount: 0,
+                    address: hotelModelPayment.address,
+                )
                 BigBoxComp(
                     //pay now
                     topTitle: "Room price",
@@ -47,37 +83,37 @@ struct PaymentView: View {
                 )
                 smallBoxComp(title: "", text: "Service fee: You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms", bgColor: Color(hex: "#ffffff"))
                 
-            
-
+                
+                
                 smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
                 
-          
-            
-//                BigBoxComp(
-//                    topTitle: "Room price",
-//                    topValue: "10,000",
-//                    bottomText: "Service fee:",
-//                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total under these terms",
-//                    bgColor: Color(hex: "#F5F5F5"), paymentCondition: "Pay Now",
-//                    paymentConditionBelow: "Pay Later"
-//                )
+                
+                
+                //                BigBoxComp(
+                //                    topTitle: "Room price",
+                //                    topValue: "10,000",
+                //                    bottomText: "Service fee:",
+                //                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total under these terms",
+                //                    bgColor: Color(hex: "#F5F5F5"), paymentCondition: "Pay Now",
+                //                    paymentConditionBelow: "Pay Later"
+                //                )
                 
                 CheckBoxView(
                     text: "I agree receive update and promotions about Jungle Hotel.",
                     isChecked: $isPromotionsChecked,
-                   
+                    
                 ) {
                     
                 }
-//    payment method credit card
+                //    payment method credit card
                 
                 PaymentMethodComp()
                 
-    //submit button
+                //submit button
                 ButtonCompView(textBtn: "Book Now",action: {
-                 
+                    
                 } )
-            
+                
             }// end vstack
             .padding(10)
         }
@@ -88,11 +124,71 @@ struct PaymentView: View {
 }
 
 #Preview {
-    PaymentView(
-        checkinDatePayment: Date(),
-        checkoutDatePayment: Date(),
-        numNight: 2,
-        pricePerNight: 12000
-    )
+    // Lightweight mock types and data for preview to avoid initializer mismatches
+//    struct MockHotelModel {
+//        var id: UUID
+//        var name: String
+//        var address: String
+//    }
+//
+//    struct MockRoom {
+//        var roomImage: [String]
+//        var roomName: String
+//        var roomAvailbility: Int
+//        var roomDetail: String
+//        var roomPrice: Int64
+//        var roomRating: Int64
+//    }
+//
+//    // Create mock values used only for the preview
+//    let mockHotel = MockHotelModel(
+//        id: UUID(),
+//        name: "Jungle Hotel",
+//        address: "123 Jungle Ave, Rainforest"
+//    )
+//
+//    let mockRoom = MockRoom(
+//        roomImage: ["sample_room_image"],
+//        roomName: "Deluxe Jungle Suite",
+//        roomAvailbility: 4,
+//        roomDetail: "Spacious room with canopy views and complimentary breakfast.",
+//        roomPrice: 12000,
+//        roomRating: 5
+//    )
+//
+//    // Bridge mock types to the view's expected types by constructing minimal values
+//    // that satisfy the properties PaymentView actually uses.
+//    // Since PaymentView expects HotelModel and Room, we recreate minimal instances
+//    // using the same property names via local extensions only in preview scope.
+//
+//    // If HotelModel and Room are available here, create them using minimal values.
+//    // Otherwise, provide fallback adapters.
+//
+//    // Adapter helpers to convert mock structs into the expected types
+//    func makeHotelModel(from mock: MockHotelModel) -> HotelModel {
+//        // Attempt to use a memberwise initializer if available; otherwise provide a minimal stub.
+//        // Replace with the correct initializer if your model differs.
+//        return HotelModel(id: mock.id, name: mock.name, address: mock.address)
+//    }
+//
+//    func makeRoom(from mock: MockRoom) -> Room {
+//        // Replace with the correct initializer if your model differs.
+//        return Room(
+//            roomImage: mock.roomImage,
+//            roomName: mock.roomName,
+//            roomAvailbility: mock.roomAvailbility,
+//            roomDetail: mock.roomDetail,
+//            roomPrice: mock.roomPrice,
+//            roomRating: mock.roomRating
+//        )
+//    }
+//
+//    return PaymentView(
+//        hotelModelPayment: makeHotelModel(from: mockHotel),
+//        roomPayment: makeRoom(from: mockRoom),
+//        checkinDatePayment: Date(),
+//        checkoutDatePayment: Calendar.current.date(byAdding: .day, value: 2, to: Date()) ?? Date(),
+//        numNight: 2,
+//        pricePerNight: 12000
+//    )
 }
-

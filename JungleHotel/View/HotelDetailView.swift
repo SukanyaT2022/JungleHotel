@@ -557,6 +557,8 @@ struct HotelDetailView: View {
                     }
                     NavigationLink(
                         destination: PaymentView(
+                            hotelModelPayment: hotel,
+                            roomPayment: room,
                             checkinDatePayment: checkInDateSecond,
                             checkoutDatePayment: checkOutDateSecond,
                             numNight: numberOfNights,

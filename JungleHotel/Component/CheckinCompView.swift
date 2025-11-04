@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct CheckinCompView: View {
-    var checkInDate: String = "Wed, Dec 3"
-    var checkInTime: String = "03:00 PM"
-    var checkOutDate: String = "Wed, Dec 10"
-    var checkOutTime: String = "12:00 PM"
-    var nights: Int = 7
+    var checkInDate: String
+    var checkOutDate: String
+    var nights: Int 
     
     var body: some View {
         HStack(spacing: 16) {
@@ -25,10 +23,7 @@ struct CheckinCompView: View {
                 Text(checkInDate)
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.black)
-                
-                Text(checkInTime)
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
+   
             }
             
             // Arrow
@@ -47,9 +42,6 @@ struct CheckinCompView: View {
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(.black)
                 
-                Text(checkOutTime)
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
             }
             
             Spacer()
@@ -69,12 +61,12 @@ struct CheckinCompView: View {
         .padding(20)
         .background(Color.white)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
+//        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
 }
 
 #Preview {
-    CheckinCompView()
+    CheckinCompView(checkInDate: "", checkOutDate: "", nights: 1)
         .padding()
         .background(Color(.systemGray6))
 }
