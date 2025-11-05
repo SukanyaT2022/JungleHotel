@@ -23,7 +23,7 @@ struct HotelSummaryCompView: View {
                     image
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 140, height: 140)
+                        .frame(width: 140, height: 160)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 case .failure:
                     ZStack {
@@ -31,14 +31,14 @@ struct HotelSummaryCompView: View {
                         Image(systemName: "photo")
                             .foregroundColor(.gray)
                     }
-                    .frame(width: 140, height: 140)
+                    .frame(width: 140, height: 160)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 case .empty:
                     ZStack {
                         Color.gray.opacity(0.1)
                         ProgressView()
                     }
-                    .frame(width: 140, height: 140)
+                    .frame(width: 140, height: 160)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
@@ -51,10 +51,6 @@ struct HotelSummaryCompView: View {
 //            
             // Hotel Details
             VStack(alignment: .leading, spacing: 8) {
-                // Category Tag
-                Text("H4")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.gray)
                 
                 // Hotel Name
                 Text(hotelName)
@@ -76,15 +72,15 @@ struct HotelSummaryCompView: View {
                     Text(String(format: "%.1f", reviewScore))
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color.blue)
-                    
                     Text("Excellent")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color.blue)
-                    
-                    Text("\(reviewCount) reviews")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
                 }
+                Text("\(reviewCount) reviews")
+                                .font(.system(size: 14))
+                                .foregroundColor(.gray)
+                       
+                      
                 
                 // Address
                 Text(address)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PaymentMethodComp: View {
     @State private var selectedPaymentMethod: PaymentMethod = .creditCard
-    @State private var cardNumber: String = ""
+    @Binding var cardNumber: String = .constant("")
     @State private var isPromotionChecked: Bool = false
     
     

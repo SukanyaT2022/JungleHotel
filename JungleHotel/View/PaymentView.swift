@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PaymentView: View {
+    @State var creditCardNumber: String = ""
     var hotelModelPayment: HotelModel
     var roomPayment: Room
     var checkinDatePayment: Date
@@ -22,8 +23,6 @@ struct PaymentView: View {
         let totalPrice:Int64 = pricePerNight * Int64(numNight)
         let discountPrice:Int64 = totalPrice - totalPrice * 5 / 100
         return ("\(totalPrice.formatted())","\(discountPrice.formatted())")
-        
-        
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -107,11 +106,23 @@ struct PaymentView: View {
                 }
                 //    payment method credit card
                 
-                PaymentMethodComp()
+                PaymentMethodComp(cardNumber: creditCardNumber)
                 
-                //submit button
+                //submit button book now
                 ButtonCompView(textBtn: "Book Now",action: {
-                    
+                 if creditCardNumber.isEmpty {
+                        print("Please enter your credit card number")
+                     return
+                 }else{
+                     NavigationLink(
+                         destination: CompleteView(
+                           
+                         ),
+                         isActive: .constant(true)
+                     ) {
+                         EmptyView()
+                     }
+                 }
                 } )
                 
             }// end vstack
@@ -192,3 +203,4 @@ struct PaymentView: View {
 //        pricePerNight: 12000
 //    )
 }
+
