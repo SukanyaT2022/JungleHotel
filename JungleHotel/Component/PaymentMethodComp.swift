@@ -9,14 +9,18 @@ import SwiftUI
 
 struct PaymentMethodComp: View {
     @State private var selectedPaymentMethod: PaymentMethod = .creditCard
-    @Binding var cardNumber: String = .constant("")
+    @Binding var cardNumber: String
     @State private var isPromotionChecked: Bool = false
     
+    //for pass data cradnumber to somewhere else we need init
+    init(cardNumber: Binding<String> = .constant("")) {
+        self._cardNumber = cardNumber
+    }
     
     enum PaymentMethod {
         case creditCard
         case digitalPayment
-        case cyptoCurrency
+        case cryptoCurrency
     }
     
     var body: some View {
@@ -84,7 +88,7 @@ struct PaymentMethodComp: View {
                     
                     Spacer()
                 }
-                .padding(.leading, 36)
+//                .padding(.leading, 36)
                 
                 // Card Number Input Field
                 if selectedPaymentMethod == .creditCard {
@@ -92,7 +96,7 @@ struct PaymentMethodComp: View {
                         Text("Credit/debit card number *")
                             .font(.caption)
                             .foregroundColor(.gray)
-                            .padding(.leading, 36)
+                            .padding(.leading, 4)
                         
                         HStack(spacing: 12) {
                             Image(systemName: "creditcard")
@@ -108,14 +112,15 @@ struct PaymentMethodComp: View {
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16))
                         }
-                        .padding()
+                        .padding(8)
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                         )
-                        .padding(.leading, 36)
+                        //padding for input box credit card
+                        .padding(.leading, 4)
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
@@ -147,18 +152,18 @@ struct PaymentMethodComp: View {
             
             Divider()
                 .padding(.vertical, 8)
-            // cypto Payment Option
+            // crypto Payment Option
             VStack(alignment: .leading, spacing: 16) {
                 RadioButtonView(
-                    title: "Cypto payment",
-                    isSelected: selectedPaymentMethod == .cyptoCurrency, discountText: ""
+                    title: "Crypto payment",
+                    isSelected: selectedPaymentMethod == .cryptoCurrency, discountText: ""
                 ) {
-                    selectedPaymentMethod = .cyptoCurrency
+                    selectedPaymentMethod = .cryptoCurrency
                 }
                 
                 // PayPal Logo
                 HStack(spacing: 12) {
-                    Text("Bitcoin | Etherium | Ripple")
+                    Text("Bitcoin | Ethereum | Ripple")
                     
                     Spacer()
                 }
@@ -235,10 +240,8 @@ struct PaymentMethodComp: View {
 
 #Preview {
     ScrollView {
-        PaymentMethodComp()
+        PaymentMethodComp(cardNumber: .constant(""))
             .padding()
     }
     .background(Color(.systemGray6))
 }
-
-

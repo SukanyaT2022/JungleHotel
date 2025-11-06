@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PaymentView: View {
+    @State var showAlert: Bool = false
+    @State var movetoCompleteScreen:Bool = false
     @State var creditCardNumber: String = ""
     var hotelModelPayment: HotelModel
     var roomPayment: Room
@@ -47,6 +49,8 @@ struct PaymentView: View {
     //    }
     //
     var body: some View {
+        NavigationStack{
+            
         ScrollView{
             
             VStack(alignment: .leading, spacing: 20) {
@@ -104,33 +108,46 @@ struct PaymentView: View {
                 ) {
                     
                 }
-                //    payment method credit card
+                //    we bring pass datat fron payment method component credit card number and bring value here
                 
-                PaymentMethodComp(cardNumber: creditCardNumber)
+                //cardnumber from payment methos biding
+                
+                //passdata cardnumber and puit it in creditcardNumber var in payment view
+                PaymentMethodComp(cardNumber: $creditCardNumber)
                 
                 //submit button book now
                 ButtonCompView(textBtn: "Book Now",action: {
-                 if creditCardNumber.isEmpty {
+                    if creditCardNumber.isEmpty {
                         print("Please enter your credit card number")
-                     return
-                 }else{
-                     NavigationLink(
-                         destination: CompleteView(
-                           
-                         ),
-                         isActive: .constant(true)
-                     ) {
-                         EmptyView()
-                     }
-                 }
+                        showAlert = true
+                        return
+                    }else{
+                        movetoCompleteScreen = true
+                    }
                 } )
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Validation Error"),
+                        message: Text("Please enter your credit card number"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+                
+                NavigationLink(
+                    destination: CompleteView(
+                        
+                    ),
+                    isActive: .constant(movetoCompleteScreen)
+                ) {
+                    EmptyView()
+                }
                 
             }// end vstack
             .padding(10)
         }
         .scrollIndicators(.hidden)
         // hide scroll bar from scrool view
-        
+    }
     }
 }
 

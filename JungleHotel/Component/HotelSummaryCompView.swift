@@ -119,3 +119,4 @@ struct HotelSummaryCompView: View {
     .background(Color(.systemGray6))
 }
 
+
