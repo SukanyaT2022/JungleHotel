@@ -9,7 +9,12 @@ import SwiftUI
 
 struct PaymentView: View {
     @State var showAlert: Bool = false
-    @State var movetoCompleteScreen:Bool = false
+    @State var navigationEnable:Bool = false
+    @State var isLoginAlready:Bool = false
+    @State var userModelPay:UserModel? = nil
+    @State var showLoginPopup: Bool = false
+    @State var showCompleteView: Bool = false
+    
     @State var creditCardNumber: String = ""
     var hotelModelPayment: HotelModel
     var roomPayment: Room
@@ -90,16 +95,7 @@ struct PaymentView: View {
                 
                 smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
                 
-                
-                
-                //                BigBoxComp(
-                //                    topTitle: "Room price",
-                //                    topValue: "10,000",
-                //                    bottomText: "Service fee:",
-                //                    bottomValue:" You will be charged on 16 November 2025\n\nIncluded in total under these terms",
-                //                    bgColor: Color(hex: "#F5F5F5"), paymentCondition: "Pay Now",
-                //                    paymentConditionBelow: "Pay Later"
-                //                )
+        
                 
                 CheckBoxView(
                     text: "I agree receive update and promotions about Jungle Hotel.",
@@ -117,12 +113,19 @@ struct PaymentView: View {
                 
                 //submit button book now
                 ButtonCompView(textBtn: "Book Now",action: {
+                    
                     if creditCardNumber.isEmpty {
                         print("Please enter your credit card number")
                         showAlert = true
                         return
                     }else{
-                        movetoCompleteScreen = true
+                        if userModelPay?.id == nil {
+                            isLoginAlready = false
+                            showLoginPopup = true
+                        }else{
+                            isLoginAlready = true
+                            showCompleteView = true
+                        }
                     }
                 } )
                 .alert(isPresented: $showAlert) {
@@ -133,20 +136,17 @@ struct PaymentView: View {
                     )
                 }
                 
-                NavigationLink(
-                    destination: CompleteView(
-                        
-                    ),
-                    isActive: .constant(movetoCompleteScreen)
-                ) {
-                    EmptyView()
-                }
-                
             }// end vstack
             .padding(10)
         }
         .scrollIndicators(.hidden)
         // hide scroll bar from scrool view
+        .fullScreenCover(isPresented: $showLoginPopup) {
+            PopUpLoginView()
+        }
+        .fullScreenCover(isPresented: $showCompleteView) {
+            CompleteView()
+        }
     }
     }
 }

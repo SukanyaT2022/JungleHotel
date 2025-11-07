@@ -6,31 +6,57 @@
 //
 
 import SwiftUI
+
+#if canImport(GoogleSignInSwift)
 import GoogleSignInSwift
+import GoogleSignIn
+#endif
+
+private extension View {
+    // Helper to find a presenting UIViewController for sign-in
+    func rootViewController() -> UIViewController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = scene.windows.first,
+              let root = window.rootViewController else { return nil }
+        var top = root
+        while let presented = top.presentedViewController { top = presented }
+        return top
+    }
+}
+
 struct LoginView: View {
-    func handleSignInButton() {
-      GIDSignIn.sharedInstance.signIn(
-        withPresenting: rootViewController) { signInResult, error in
-          guard let result = signInResult else {
-            // Inspect error
-            return
-          }
-          // If sign in succeeded, display the app's main content View.
+    private func handleSignInButton() {
+        #if canImport(GoogleSignInSwift)
+        guard let presenter = rootViewController() else { return }
+        GIDSignIn.sharedInstance.signIn(withPresenting: presenter) { signInResult, error in
+            if let error = error {
+                // Inspect error
+                print("Google Sign-In error: \(error)")
+                return
+            }
+            guard let _ = signInResult else {
+                // No result returned
+                return
+            }
+            // If sign in succeeded, display the app's main content View.
+            // TODO: Navigate to main content.
         }
-      )
+        #else
+        // GoogleSignInSwift not available; no-op
+        #endif
     }
-    //function for sign out
-//    GIDSignIn.sharedInstance.signOut()
-  
+
     var body: some View {
+        #if canImport(GoogleSignInSwift)
         GoogleSignInButton(action: handleSignInButton)
-        
-//        Button("sign out") {
-//          
-//        }
-        
+        #else
+        Button("Sign in with Google (module missing)") {
+            handleSignInButton()
+        }
+        .disabled(true)
+        .foregroundStyle(.secondary)
+        #endif
     }
-    
 }
 
 #Preview {

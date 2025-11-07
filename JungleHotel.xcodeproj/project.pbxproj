@@ -13,6 +13,7 @@
 		21A092B42E79C8DE00C2AF96 /* FirebaseAnalyticsIdentitySupport in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092B32E79C8DE00C2AF96 /* FirebaseAnalyticsIdentitySupport */; };
 		21A092B62E79C8DE00C2AF96 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092B52E79C8DE00C2AF96 /* FirebaseAppCheck */; };
 		21A092E22E79CAD700C2AF96 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092E12E79CAD700C2AF96 /* FirebaseFirestore */; };
+		21E174FA2EBE4A4900A47214 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 21E174F92EBE4A4900A47214 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 				21A092B62E79C8DE00C2AF96 /* FirebaseAppCheck in Frameworks */,
 				21A092AE2E79C8DE00C2AF96 /* FirebaseAI in Frameworks */,
 				21A092E22E79CAD700C2AF96 /* FirebaseFirestore in Frameworks */,
+				21E174FA2EBE4A4900A47214 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +143,7 @@
 				21A092B32E79C8DE00C2AF96 /* FirebaseAnalyticsIdentitySupport */,
 				21A092B52E79C8DE00C2AF96 /* FirebaseAppCheck */,
 				21A092E12E79CAD700C2AF96 /* FirebaseFirestore */,
+				21E174F92EBE4A4900A47214 /* GoogleSignIn */,
 			);
 			productName = JungleHotel;
 			productReference = 21A21E232E5E05BD00DF48D4 /* JungleHotel.app */;
@@ -635,6 +638,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 21A092AC2E79C8DE00C2AF96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		21E174F92EBE4A4900A47214 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 215370B32EBD07F300CC367B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

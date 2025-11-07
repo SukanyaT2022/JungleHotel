@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import GoogleSignIn
 //@main
 //struct JungleHotelApp: App {
 //    var body: some Scene {
