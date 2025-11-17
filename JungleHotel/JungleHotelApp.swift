@@ -28,6 +28,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     // Configure Firebase
     FirebaseApp.configure()
     
+    // Configure Google Sign-In with client ID from Info.plist
+    if let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String {
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+        print("Google Sign-In configured with client ID")
+    } else {
+        print("Warning: GIDClientID not found in Info.plist")
+    }
+    
     // Configure Firestore settings for better simulator performance
     let db = Firestore.firestore()
     let settings = FirestoreSettings()

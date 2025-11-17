@@ -7,14 +7,40 @@
 
 import SwiftUI
 
+enum SocialIconType: String, CaseIterable {
+    case google
+    case facebook
+    case apple
+}
 struct PopUpLoginView: View {
+    @State private var googleSiginPopupVisible: Bool = false
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var rememberMe: Bool = false
     @State private var showPassword: Bool = false
     @Environment(\.dismiss) var dismiss
+
+    @State var loginType: SocialIconType = .google
+    
+    // Helper function to return destination view based on login type
+    @ViewBuilder
+    func destinationView() -> some View {
+        switch loginType {
+        case .google:
+            GoogleLoginView()
+        case .facebook:
+            Text("Facebook Login View")
+                .font(.title)
+        case .apple:
+            Text("Apple Login View")
+                .font(.title)
+        }
+    }
     
     var body: some View {
+        NavigationStack {
+            
+     
         ZStack {
             // Background
             Color(red: 0.2, green: 0.3, blue: 0.5)
@@ -168,51 +194,69 @@ struct PopUpLoginView: View {
                 .padding(.horizontal, 24)
                 
                 // Social Login Buttons
-                HStack(spacing: 20) {
-                    // Google
-                    Button(action: {
-                        // Google sign in
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 56, height: 56)
-                            
-                            Image(systemName: "g.circle.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.red)
+                ZStack {
+                    HStack(spacing: 24) {
+                        // Google
+                        Button(action: {
+                            loginType = .google
+                            googleSiginPopupVisible = true
+                        })
+                        {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 56, height: 56)
+                                
+                                
+                                Image(systemName: "g.circle.fill")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.red)
+                                   
+                            }
+                        }
+                        
+                        // Facebook
+                        Button(action: {
+                            loginType = .facebook
+                            googleSiginPopupVisible = true
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 56, height: 56)
+                                
+                                Image(systemName: "f.circle.fill")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        
+                        // Apple
+                        Button(action: {
+                            loginType = .apple
+                            googleSiginPopupVisible = true
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 56, height: 56)
+                                
+                                Image(systemName: "apple.logo")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.black)
+                            }
                         }
                     }
                     
-                    // Facebook
-                    Button(action: {
-                        // Facebook sign in
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 56, height: 56)
-                            
-                            Image(systemName: "f.circle.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.blue)
-                        }
-                    }
-                    
-                    // Apple
-                    Button(action: {
-                        // Apple sign in
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 56, height: 56)
-                            
-                            Image(systemName: "apple.logo")
-                                .font(.system(size: 28))
-                                .foregroundColor(.black)
-                        }
-                    }
+                    // Hidden NavigationLink that triggers based on loginType
+                    NavigationLink("", destination: destinationView(), isActive: $googleSiginPopupVisible)
+                        .hidden()
                 }
                 .padding(.top, 32)
                 
@@ -236,6 +280,7 @@ struct PopUpLoginView: View {
             }
         }
         .navigationBarHidden(true)
+        }//close navigation stack
     }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		214D43252EC241FC006A737F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 214D43242EC241FC006A737F /* GoogleSignInSwift */; };
 		21A092AE2E79C8DE00C2AF96 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092AD2E79C8DE00C2AF96 /* FirebaseAI */; };
 		21A092B02E79C8DE00C2AF96 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092AF2E79C8DE00C2AF96 /* FirebaseAnalytics */; };
 		21A092B22E79C8DE00C2AF96 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092B12E79C8DE00C2AF96 /* FirebaseAnalyticsCore */; };
@@ -39,9 +40,22 @@
 		21A21E3D2E5E05BE00DF48D4 /* JungleHotelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JungleHotelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		214D43272EC2439E006A737F /* Exceptions for "JungleHotel" folder in "JungleHotel" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 21A21E222E5E05BD00DF48D4 /* JungleHotel */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		21A21E252E5E05BD00DF48D4 /* JungleHotel */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				214D43272EC2439E006A737F /* Exceptions for "JungleHotel" folder in "JungleHotel" target */,
+			);
 			path = JungleHotel;
 			sourceTree = "<group>";
 		};
@@ -65,6 +79,7 @@
 				21A092B42E79C8DE00C2AF96 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				21A092B02E79C8DE00C2AF96 /* FirebaseAnalytics in Frameworks */,
 				21A092B22E79C8DE00C2AF96 /* FirebaseAnalyticsCore in Frameworks */,
+				214D43252EC241FC006A737F /* GoogleSignInSwift in Frameworks */,
 				21A092B62E79C8DE00C2AF96 /* FirebaseAppCheck in Frameworks */,
 				21A092AE2E79C8DE00C2AF96 /* FirebaseAI in Frameworks */,
 				21A092E22E79CAD700C2AF96 /* FirebaseFirestore in Frameworks */,
@@ -144,6 +159,7 @@
 				21A092B52E79C8DE00C2AF96 /* FirebaseAppCheck */,
 				21A092E12E79CAD700C2AF96 /* FirebaseFirestore */,
 				21E174F92EBE4A4900A47214 /* GoogleSignIn */,
+				214D43242EC241FC006A737F /* GoogleSignInSwift */,
 			);
 			productName = JungleHotel;
 			productReference = 21A21E232E5E05BD00DF48D4 /* JungleHotel.app */;
@@ -434,6 +450,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"JungleHotel/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JungleHotel/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -462,6 +479,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"JungleHotel/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = JungleHotel/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -609,6 +627,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		214D43242EC241FC006A737F /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 215370B32EBD07F300CC367B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		21A092AD2E79C8DE00C2AF96 /* FirebaseAI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 21A092AC2E79C8DE00C2AF96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
