@@ -22,6 +22,7 @@ struct PaymentView: View {
     var checkoutDatePayment: Date
     @State private var radioBtnSelected: Bool = false
     @State private var isPromotionsChecked: Bool = true
+    @FocusState private var isKeyboardFocused: Bool
     
     @State  var numNight: Int = 1
     @State  var pricePerNight: Int64 = 0
@@ -91,12 +92,8 @@ struct PaymentView: View {
                 )
                 smallBoxComp(title: "", text: "Service fee: You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms", bgColor: Color(hex: "#ffffff"))
                 
-                
-                
                 smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
-                
-        
-                
+            
                 CheckBoxView(
                     text: "I agree receive update and promotions about Jungle Hotel.",
                     isChecked: $isPromotionsChecked,
@@ -109,7 +106,7 @@ struct PaymentView: View {
                 //cardnumber from payment methos biding
                 
                 //passdata cardnumber and puit it in creditcardNumber var in payment view
-                PaymentMethodComp(cardNumber: $creditCardNumber)
+                PaymentMethodComp(cardNumber: $creditCardNumber, isKeyboardFocused: $isKeyboardFocused)
                 
                 //submit button book now
                 ButtonCompView(textBtn: "Book Now",action: {
@@ -140,7 +137,11 @@ struct PaymentView: View {
             .padding(10)
         }
         .scrollIndicators(.hidden)
+        .scrollDismissesKeyboard(.interactively)
         // hide scroll bar from scrool view
+        .onTapGesture {
+            isKeyboardFocused = false
+        }
         .fullScreenCover(isPresented: $showLoginPopup) {
             PopUpLoginView()
         }

@@ -68,6 +68,8 @@ struct MainScreenView: View {
                 Task { await loadData() }
             }
         }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
+        
         .background(Color.clear)
         .navigationBarHidden(true)
         .fullScreenCover(isPresented: $showingFilterOptions) {
@@ -129,7 +131,7 @@ struct MainScreenView: View {
             .padding(.top, 8)
             
             // Custom search bar
-            customSearchBar
+//            customSearchBar
             
             // Custom date and guest picker
             customDateGuestPicker
