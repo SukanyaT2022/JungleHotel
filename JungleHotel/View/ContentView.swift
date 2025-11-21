@@ -10,8 +10,9 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-     Text("Jungle Hotel Test")
-            MainScreenView()
+
+//            MainScreenView()
+            PaymentView(hotelModelPayment: HotelModel(hotelNameType: "", latitude: "", longitude: "", contactNumber: "", address: "", roomObj: []), roomPayment: Room(roomAvailbility: "", roomDetail: "", roomImage: [], roomName: "", roomPrice: 0, roomRating: 0.0), checkinDatePayment: Date(), checkoutDatePayment: Date())
            
         }
        

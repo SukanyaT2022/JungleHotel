@@ -13,15 +13,15 @@ struct CheckinCompView: View {
     var nights: Int 
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 10) {
             // Check-in Section
             VStack(alignment: .leading, spacing: 4) {
                 Text("Check-in")
-                    .font(.system(size: 14))
+                    .font(.system(size: 16))
                     .foregroundColor(.gray)
                 
                 Text(checkInDate)
-                    .font(.system(size: 22, weight: .semibold))
+                    .font(.system(size:14, weight: .semibold))
                     .foregroundColor(.black)
    
             }
@@ -35,11 +35,11 @@ struct CheckinCompView: View {
             // Check-out Section
             VStack(alignment: .leading, spacing: 4) {
                 Text("Check-out")
-                    .font(.system(size: 14))
+                    .font(.system(size: 16))
                     .foregroundColor(.gray)
                 
                 Text(checkOutDate)
-                    .font(.system(size: 22, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.black)
                 
             }
@@ -47,14 +47,16 @@ struct CheckinCompView: View {
             Spacer()
             
             // Nights Section
-            VStack(alignment: .trailing, spacing: 4) {
-                Text("\(nights)")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.black)
+            VStack(alignment: .center, spacing: 4) {
                 
                 Text("nights")
-                    .font(.system(size: 14))
+                    .font(.system(size: 16))
                     .foregroundColor(.gray)
+                
+                Text("\(nights)")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.black)
+            
             }
             .padding(.top, 8)
         }

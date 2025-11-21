@@ -135,7 +135,16 @@ struct PaymentView: View {
                 
             }// end vstack
             .padding(10)
-        }
+        }//close scroll view
+        .onAppear{
+            for family in UIFont.familyNames.sorted() {
+                print("Family: \(family)")
+                let names = UIFont.fontNames(forFamilyName: family)
+                for name in names {
+                    print("   → \(name)")
+                }
+            }
+    }
         .scrollIndicators(.hidden)
         .scrollDismissesKeyboard(.interactively)
         // hide scroll bar from scrool view
@@ -149,7 +158,8 @@ struct PaymentView: View {
             CompleteView()
         }
     }
-    }
+    }//close view
+       
 }
 
 #Preview {

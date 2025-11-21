@@ -48,7 +48,7 @@ struct MainScreenView: View {
                     ZStack(alignment: .top) {
                         // Background content that can scroll
                         contentView
-                            .padding(.top, 210) // move the card view down from input box- on the main view- Add padding to account for sticky header
+                            .padding(.top, 150) // move the card view down from input box- on the main view- Add padding to account for sticky header
                         
                         // Sticky header
                         VStack(spacing: 0) {
@@ -56,8 +56,9 @@ struct MainScreenView: View {
                             Spacer()
                         }
                     }
-                }
-             
+                }//close scrollview
+                //navigationbarhiden always need to be in navigation stack
+                .navigationBarHidden(true)
                 
             }//close screlol view
             
@@ -68,10 +69,13 @@ struct MainScreenView: View {
                 Task { await loadData() }
             }
         }
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
+//        search box native
+        .searchable(text: $searchText, placement: .toolbar)
+//        .background(.ultraThinMaterial)
+        .background(.ultraThickMaterial)
         
-        .background(Color.clear)
-        .navigationBarHidden(true)
+      
+     
         .fullScreenCover(isPresented: $showingFilterOptions) {
             FilterOptionsView(
                 minPrice: $minPrice,
