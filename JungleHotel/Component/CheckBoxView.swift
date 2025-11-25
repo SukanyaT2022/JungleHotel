@@ -22,12 +22,12 @@ struct CheckBoxView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(isChecked ? Color.blue : Color.gray, lineWidth: 2)
-                        .frame(width: 24, height: 24)
+                        .frame(width: 16, height: 16)
 
                     if isChecked {
-                        RoundedRectangle(cornerRadius: 2)
+                        RoundedRectangle(cornerRadius: 4)
                             .fill(Color.blue)
-                            .frame(width: 24, height: 24)
+                            .frame(width: 16, height: 16)
 
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .bold))

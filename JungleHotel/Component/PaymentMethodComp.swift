@@ -33,6 +33,7 @@ struct PaymentMethodComp: View {
                 cardSection
                 Divider().padding(.vertical, 8)
                 digitalSection
+                    .frame(height: 30)
                 Divider().padding(.vertical, 8)
                 cryptoSection
                 Divider().padding(.vertical, 8)
@@ -127,7 +128,8 @@ struct PaymentMethodComp: View {
                 )
 
             Spacer()
-        }
+        }//close hstack
+         .padding(.leading, 30)
     }
     
     @ViewBuilder
@@ -166,7 +168,7 @@ struct PaymentMethodComp: View {
     
     @ViewBuilder
     private var digitalSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 14) {
             RadioButtonView(
                 title: "Digital payment",
                 isSelected: selectedPaymentMethod == .digitalPayment,
@@ -179,17 +181,18 @@ struct PaymentMethodComp: View {
                 Image("paypalCard")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 20)
+                    .frame(height:30)
 
                 Spacer()
             }
-            .padding(.leading, 36)
-        }
+            .padding(.leading, 30)
+        }//close vstack
+        .frame(height: 50)
     }
     
     @ViewBuilder
     private var cryptoSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 5) {
             RadioButtonView(
                 title: "Crypto payment",
                 isSelected: selectedPaymentMethod == .cryptoCurrency,
@@ -198,8 +201,9 @@ struct PaymentMethodComp: View {
                 selectedPaymentMethod = .cryptoCurrency
             }
 
-            HStack(spacing: 12) {
+            HStack() {
                 Text("Bitcoin | Ethereum | Ripple")
+                    .font(Font.caption.weight(.semibold))
                 Spacer()
             }
             .padding(.leading, 36)
@@ -248,12 +252,12 @@ struct PaymentMethodComp: View {
         ZStack {
             RoundedRectangle(cornerRadius: 4)
                 .stroke(isChecked ? Color.blue : Color.gray, lineWidth: 2)
-                .frame(width: 24, height: 24)
+                .frame(width: 18, height: 18)
 
             if isChecked {
                 RoundedRectangle(cornerRadius: 2)
                     .fill(Color.blue)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 16, height: 16)
 
                 Image(systemName: "checkmark")
                     .font(.system(size: 14, weight: .bold))

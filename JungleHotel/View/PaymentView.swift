@@ -60,8 +60,8 @@ struct PaymentView: View {
         ScrollView{
             
             VStack(alignment: .leading, spacing: 20) {
-                Text("Payment Details")
-                    .font(.title)
+                Text("Your Information Payment")
+                    .font(.title3)
                     .fontWeight(.bold)
                 CheckinCompView(
                     checkInDate: formatDate(checkinDatePayment),
@@ -101,6 +101,7 @@ struct PaymentView: View {
                 ) {
                     
                 }
+                BillingAddressView()
                 //    we bring pass datat fron payment method component credit card number and bring value here
                 
                 //cardnumber from payment methos biding
@@ -134,7 +135,8 @@ struct PaymentView: View {
                 }
                 
             }// end vstack
-            .padding(10)
+            .padding(.top, 20)
+            .padding(.horizontal, 10)
         }//close scroll view
         .onAppear{
             for family in UIFont.familyNames.sorted() {

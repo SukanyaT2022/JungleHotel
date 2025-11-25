@@ -55,8 +55,6 @@ struct BigBoxComp: View {
                      .font(.headline)
                      .fontWeight(.semibold)
                      .foregroundColor(.primary)
-               
-                     
                 }
                 
             }
@@ -69,7 +67,7 @@ struct BigBoxComp: View {
 //                .padding(.vertical, 8)
             //divider() is line between 2 box
             
-            // Bottom Section
+            // Bottom Section pay later
             HStack(alignment: .top, spacing: 12) {
                VStack(alignment: .leading, spacing: 0) {
                    //radio button
@@ -97,19 +95,21 @@ struct BigBoxComp: View {
                        .foregroundColor(.primary)
                        .lineLimit(nil)
                        .fixedSize(horizontal: false, vertical: true)
-                     
-               }
+               }// target on price number pay later only
+            
+               
               
             }//close hstack
-            
+            //target gray box paylater
             .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
             .background(bgColor)
+            .frame(height: 80, alignment: .leading)
+            .padding(.top, 10)
             .cornerRadius(20)
             //end h stcak prop
          
         }//vstack closing
-        .padding(10)
+        .padding(20)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.black.opacity(0.3), lineWidth: 1.5)

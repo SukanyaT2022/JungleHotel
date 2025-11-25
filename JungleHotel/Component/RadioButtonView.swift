@@ -22,23 +22,30 @@ struct RadioButtonView: View {
                 ZStack {
                     Circle()
                         .stroke(isSelected ? Color.blue : Color.gray, lineWidth: 2)
-                        .frame(width: 20, height: 20)
+                        .frame(width: 16, height: 16)
                     
                     if isSelected {
                         Circle()
                             .fill(Color.blue)
-                            .frame(width: 14, height: 14)
+                            .frame(width: 12, height: 12)
                     }
                 }
 //                end raio circle
                 
                 // Title Text
-                VStack(alignment: .leading, spacing: 6){
-                    Text(title)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text(discountText)
-                        .font(.caption)
+                VStack(alignment: .leading, spacing: 5){
+                    if !title.isEmpty {
+                        Text(title)
+                            .font(Font(UIFont(name: "Verdana", size: 16)!))
+                            .foregroundColor(.primary)
+                    }
+                    
+                       
+                    if !discountText.isEmpty {
+                        Text(discountText)
+                            .font(Font(UIFont(name: "Verdana", size: 12)!))
+                    }
+                  
                 }
                
                 

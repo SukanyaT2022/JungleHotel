@@ -12,16 +12,18 @@ struct smallBoxComp: View {
     let text: String
     let bgColor: Color 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.primary)
-            
+        VStack(alignment: .leading, spacing: 0) {
+            //if title not there do not take any space
+            if !title.isEmpty {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
             Text(text)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .padding(16)
+        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(bgColor)
         .overlay(
