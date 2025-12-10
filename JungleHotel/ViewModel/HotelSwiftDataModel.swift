@@ -27,3 +27,13 @@ var id: String = UUID().uuidString
 }
 
 //next aster step 4 go to JungleHotelApp which is entry point
+@Model
+class CountryModelInfo: Identifiable {
+    var id: String = UUID().uuidString
+    var countryName: String
+
+    init(id: String = UUID().uuidString, countryName: String) {
+        self.id = id
+        self.countryName = countryName
+    }
+}
