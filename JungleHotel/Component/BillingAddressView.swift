@@ -13,6 +13,7 @@ struct BillingAddressView: View {
     @State private var selectedCountryCode: String? // Country.iso2
     @State private var selectedStateCode: String? // StateModel.state_code
     @State private var selectedCityName: String? // City.name
+    @State private var userName: String = ""
     
     private var selectedCountry: Country? {
         guard let code = selectedCountryCode else { return nil }
@@ -37,7 +38,17 @@ struct BillingAddressView: View {
             Text("Billing Address")
                 .font(.title3)
                 .bold()
-            
+            Text("Name")
+            TextField("Enter name", text: $userName)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, 12)
+                .frame(height: 45)
+                .background(Color.gray.opacity(0.2))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
+                .cornerRadius(10)
             // Country Picker
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 2) {
@@ -171,6 +182,11 @@ struct BillingAddressView: View {
                     }
                     .pickerStyle(.menu)
                     .disabled(selectedStateCode == nil || apiService.cities.isEmpty)
+                    
+                    .onChange(of: selectedCityName) { oldValue, newValue in
+                        selectedCityName = newValue
+                       
+                    }
                 }
             }
             

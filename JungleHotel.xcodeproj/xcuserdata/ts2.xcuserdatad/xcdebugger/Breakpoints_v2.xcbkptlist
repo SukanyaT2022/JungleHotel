@@ -254,40 +254,10 @@
             filePath = "JungleHotel/Component/BillingAddressView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
             landmarkName = "selectedState"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "DFF15868-867D-485C-A425-994F47E95955 - e81334c6b3b56190"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "JungleHotel.BillingAddressView.selectedState.getter : Swift.Optional&lt;JungleHotel.StateModel&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/Component/BillingAddressView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24">
-               </Location>
-               <Location
-                  uuid = "DFF15868-867D-485C-A425-994F47E95955 - fdb750447108cf32"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (JungleHotel.StateModel) -&gt; Swift.Bool in JungleHotel.BillingAddressView.selectedState.getter : Swift.Optional&lt;JungleHotel.StateModel&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/Component/BillingAddressView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "24"
-                  endingLineNumber = "24">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -300,40 +270,10 @@
             filePath = "JungleHotel/Component/BillingAddressView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
             landmarkName = "selectedCity"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "39BE00D6-E2DB-4E58-98EC-58083FAA5FE2 - d25b811c4af7b573"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "JungleHotel.BillingAddressView.selectedCity.getter : Swift.Optional&lt;JungleHotel.City&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/Component/BillingAddressView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29"
-                  endingLineNumber = "29">
-               </Location>
-               <Location
-                  uuid = "39BE00D6-E2DB-4E58-98EC-58083FAA5FE2 - d6f1500fd1251818"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (JungleHotel.City) -&gt; Swift.Bool in JungleHotel.BillingAddressView.selectedCity.getter : Swift.Optional&lt;JungleHotel.City&gt;"
-                  moduleName = "JungleHotel.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ts2/Documents/swift2025/swiftui2025paw/JungleHotel/JungleHotel/Component/BillingAddressView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29"
-                  endingLineNumber = "29">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
