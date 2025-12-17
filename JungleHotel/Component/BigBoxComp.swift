@@ -51,7 +51,7 @@ struct BigBoxComp: View {
                 Spacer()
                 //pay later pay now text
              VStack(alignment: .leading, spacing: 0) {
-                 Text(topValue)
+                 Text("$" + topValue)
                      .font(.headline)
                      .fontWeight(.semibold)
                      .foregroundColor(.primary)
@@ -89,7 +89,7 @@ struct BigBoxComp: View {
               
                VStack{
                    //pay later
-                   Text(bottomValue)
+                   Text("$" + bottomValue)
                        .font(.headline)
                        .fontWeight(.semibold)
                        .foregroundColor(.primary)

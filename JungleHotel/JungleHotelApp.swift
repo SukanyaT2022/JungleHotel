@@ -85,7 +85,7 @@ struct JungleHotelApp: App {
 
   var body: some Scene {
     WindowGroup {
-      ContentView()
+   ContentView()
     }
 //      step 8 line below for swiftdata
     .modelContainer(for: HotelSwiftDataModel.self)

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 enum SocialIconType: String, CaseIterable {
     case google
@@ -18,7 +19,10 @@ struct PopUpLoginView: View {
     @State private var password: String = ""
     @State private var rememberMe: Bool = false
     @State private var showPassword: Bool = false
+    @State private var isLoading: Bool = false
+    @State private var authErrorMessage: String? = nil
     @Environment(\.dismiss) var dismiss
+    @State private var isSignup : Bool = false
 
     @State var loginType: SocialIconType = .google
     
@@ -37,10 +41,92 @@ struct PopUpLoginView: View {
         }
     }
     
+    // Basic email format validation
+    private func isValidEmail(_ email: String) -> Bool {
+        let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        return email.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    // Perform Firebase email/password sign in
+    private func signInWithEmailPassword() {
+        authErrorMessage = nil
+        guard !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !password.isEmpty else {
+            authErrorMessage = "Please enter both email and password."
+            return
+        }
+        guard isValidEmail(email) else {
+            authErrorMessage = "Please enter a valid email address."
+            return
+        }
+
+        isLoading = true
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        Auth.auth().signIn(withEmail: trimmedEmail, password: password) { result, error in
+            isLoading = false
+            if let error = error as NSError? {
+                print(error.code)
+                // Map common Firebase Auth errors to friendly messages
+//                switch AuthErrorCode.Code(rawValue: error.code) {
+//                case .wrongPassword:
+//                    authErrorMessage = "Incorrect password. Please try again."
+//                case .invalidEmail:
+//                    authErrorMessage = "The email address is badly formatted."
+//                case .userNotFound:
+//                    authErrorMessage = "No account found with this email."
+//                case .networkError:
+//                    authErrorMessage = "Network error. Please check your connection."
+//                default:
+//                    authErrorMessage = error.localizedDescription
+//                }
+                return
+            }
+            // Success — dismiss this view
+            dismiss()
+        }
+    }
+    
+    // Perform Firebase email/password sign up
+    private func signUpWithEmailPassword() {
+        authErrorMessage = nil
+        guard !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !password.isEmpty else {
+            authErrorMessage = "Please enter both email and password."
+            return
+        }
+        guard isValidEmail(email) else {
+            authErrorMessage = "Please enter a valid email address."
+            return
+        }
+
+        isLoading = true
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        Auth.auth().createUser(withEmail: trimmedEmail, password: password) { result, error in
+            isLoading = false
+            if let error = error as NSError? {
+//                switch AuthErrorCode.Code(rawValue: error.code) {
+//                case .emailAlreadyInUse:
+//                    authErrorMessage = "An account already exists with this email."
+//                case .invalidEmail:
+//                    authErrorMessage = "The email address is badly formatted."
+//                case .weakPassword:
+//                    authErrorMessage = "Password is too weak. Please use at least 6 characters."
+//                case .networkError:
+//                    authErrorMessage = "Network error. Please check your connection."
+//                default:
+//                    authErrorMessage = error.localizedDescription
+//                }
+                return
+            }
+            // Success — dismiss this view (or navigate onward)
+            dismiss()
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             
-     
+
         ZStack {
             // Background
             Color(red: 0.2, green: 0.3, blue: 0.5)
@@ -89,6 +175,15 @@ struct PopUpLoginView: View {
                     }
                     .padding(.top, 40)
                     
+                    // Auth error message
+                    if let authErrorMessage {
+                        Text(authErrorMessage)
+                            .font(.system(size: 14))
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+                    }
+                    
                     // Email Field
                     HStack {
                         Image(systemName: "envelope")
@@ -99,15 +194,6 @@ struct PopUpLoginView: View {
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                             .font(.system(size: 15))
-                        
-                        if !email.isEmpty {
-                            Button(action: {
-                                // Email verified action
-                            }) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(Color(red: 0.2, green: 0.3, blue: 0.5))
-                            }
-                        }
                     }
                     .padding()
                     .background(Color.white)
@@ -176,16 +262,50 @@ struct PopUpLoginView: View {
                     
                     // Sign In Button
                     Button(action: {
-                        // Sign in action
+                        if !isLoading {
+                            signInWithEmailPassword()
+                        }
                     }) {
-                        Text("Sign in")
+                        HStack(spacing: 8) {
+                            if isLoading {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.white)
+                            }
+                            Text(isLoading ? "Signing in..." : "Sign in")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color(red: 0.2, green: 0.3, blue: 0.5))
+                        .opacity(isLoading ? 0.8 : 1.0)
+                        .cornerRadius(25)
+                    }
+                    .disabled(isLoading)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 8)
+                    
+                    // Sign Up Button (create account)
+                    NavigationLink("", destination: SignUpView(), isActive: $isSignup)
+                    Button(action: {
+                        if !isLoading {
+                        isSignup = true
+                        }
+                    }) {
+                        Text(isLoading ? "Creating account..." : "Sign up")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(red: 0.2, green: 0.3, blue: 0.5))
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color(red: 0.2, green: 0.3, blue: 0.5))
+                            .background(Color.white)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
                             .cornerRadius(25)
                     }
+                    .disabled(isLoading)
                     .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
@@ -267,7 +387,7 @@ struct PopUpLoginView: View {
                         .foregroundColor(.white.opacity(0.8))
                     
                     Button(action: {
-                        // Sign up action
+                        isSignup = true
                     }) {
                         Text("Sign Up here")
                             .font(.system(size: 14, weight: .semibold))
@@ -287,3 +407,4 @@ struct PopUpLoginView: View {
 #Preview {
     PopUpLoginView()
 }
+

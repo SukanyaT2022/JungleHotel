@@ -38,17 +38,13 @@ struct BillingAddressView: View {
             Text("Billing Address")
                 .font(.title3)
                 .bold()
-            Text("Name")
-            TextField("Enter name", text: $userName)
-                .textFieldStyle(.plain)
-                .padding(.horizontal, 12)
-                .frame(height: 45)
-                .background(Color.gray.opacity(0.2))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
-                .cornerRadius(10)
+            
+            InputCompView(
+                textLabel: "Name",
+                textValue: $userName,
+                placeholder: "Enter full name",
+                icon: "person"
+            )
             // Country Picker
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 2) {
@@ -84,24 +80,11 @@ struct BillingAddressView: View {
             }
             
             // Address Input
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(spacing: 2) {
-                    Text("Address")
-                        .font(.system(size: 14))
-                    Text("*")
-                        .foregroundStyle(.red)
-                }
-                TextField("Enter address", text: $address)
-                    .textFieldStyle(.plain)
-                    .padding(.horizontal, 12)
-                    .frame(height: 45)
-                    .background(Color.gray.opacity(0.2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                    .cornerRadius(10)
-            }
+            InputCompView(
+                textLabel: "Address",
+                textValue: $address,
+                placeholder: "Enter street address"
+            )
             
             // State Picker
             VStack(alignment: .leading, spacing: 5) {
@@ -191,24 +174,12 @@ struct BillingAddressView: View {
             }
             
             // Zip/Postal Code Input
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(spacing: 2) {
-                    Text("Zip/Postal Code")
-                        .font(.system(size: 14))
-                    Text("*")
-                        .foregroundStyle(.red)
-                }
-                TextField("Enter zip code", text: $zipCode)
-                    .textFieldStyle(.plain)
-                    .padding(.horizontal, 12)
-                    .frame(height: 45)
-                    .background(Color.gray.opacity(0.2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                    .cornerRadius(10)
-            }
+            InputCompView(
+                textLabel: "Zip/Postal Code",
+                textValue: $zipCode,
+                placeholder: "Enter zip/postal code",
+                keyboardType: .numbersAndPunctuation
+            )
             
             // Loading Indicator
             if apiService.isLoading {
