@@ -23,7 +23,7 @@ struct PopUpLoginView: View {
     @State private var authErrorMessage: String? = nil
     @Environment(\.dismiss) var dismiss
     @State private var isSignup : Bool = false
-
+    @State private var showAlertNotCorrectPassword : Bool = false
     @State var loginType: SocialIconType = .google
     
     // Helper function to return destination view based on login type
@@ -66,6 +66,7 @@ struct PopUpLoginView: View {
             isLoading = false
             if let error = error as NSError? {
                 print(error.code)
+                showAlertNotCorrectPassword = true
                 // Map common Firebase Auth errors to friendly messages
 //                switch AuthErrorCode.Code(rawValue: error.code) {
 //                case .wrongPassword:
@@ -398,6 +399,9 @@ struct PopUpLoginView: View {
                 
                 Spacer()
             }
+        }
+        .alert(isPresented: $showAlertNotCorrectPassword) {
+            Alert(title: Text(""), message: Text("Please enter a valid email and password"), dismissButton: .default(Text("OK")))
         }
         .navigationBarHidden(true)
         }//close navigation stack
