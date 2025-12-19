@@ -7,12 +7,18 @@
 
 import SwiftUI
 
-struct sucessBookView: View {
+struct SuccessBookView: View {
+//    we bring booking data from payment view line 131 to here.
+    var bookingData: [String: Any]
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Sucessfully Booked!")
+        Text("Checkin Date:\(bookingData["checkinDate"] as! String)")
+        Text("CheckoutDate:\(bookingData["checkoutDate"] as! String)")
+        Text("Price pernight: \(bookingData["pricePerNight"] as!  Int64)")
+        Text("Price total:\(bookingData["totalPrice"] as!  Int64)")
     }
 }
 
 #Preview {
-    sucessBookView()
+//    SuccessBookView()
 }

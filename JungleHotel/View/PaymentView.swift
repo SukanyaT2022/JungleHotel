@@ -4,16 +4,23 @@
 //
 //  Created by TS2 on 8/26/25.
 //
+import FirebaseCore
+import FirebaseAuth
+import FirebaseFirestore
 
 import SwiftUI
 
 struct PaymentView: View {
+//    below state is for navigation link -- help to move to successscreen connect line 148
+    @State var navigateToSuccessScreenVar : Bool = false
     @State var showAlert: Bool = false
     @State var navigationEnable:Bool = false
     @State var isLoginAlready:Bool = false
     @State var userModelPay:UserModel? = nil
     @State var showLoginPopup: Bool = false
     @State var showCompleteView: Bool = false
+    
+    private let db = Firestore.firestore()
     
     @State var creditCardNumber: String = ""
     var hotelModelPayment: HotelModel
@@ -109,6 +116,25 @@ struct PaymentView: View {
                 //passdata cardnumber and puit it in creditcardNumber var in payment view
                 PaymentMethodComp(cardNumber: $creditCardNumber, isKeyboardFocused: $isKeyboardFocused)
                 
+                
+                let bookingData: [String: Any] = [
+                    "checkinDate": formatDate(checkinDatePayment),
+                    "checkoutDate": formatDate(checkoutDatePayment),
+                    "pricePerNight": pricePerNight,
+                    "totalPrice": pricePerNight * Int64(numNight),
+                ]
+                
+                //connect data to sucessful screen
+                NavigationLink(
+                    destination: SuccessBookView(
+                     bookingData: bookingData,
+                    ),
+                    isActive: $navigateToSuccessScreenVar
+                ) {
+                    EmptyView()
+                }
+                //end navigation link
+                
                 //submit button book now
                 ButtonCompView(textBtn: "Book Now",action: {
                     
@@ -117,6 +143,33 @@ struct PaymentView: View {
                         showAlert = true
                         return
                     }else{
+                        
+                        
+                        // start code connect firebase booking after successfull payment
+                        
+                        // Save user data save to Firestore
+                        let now = Timestamp(date: Date())
+                       
+                        
+                        db.collection("booking").document(Auth.auth().currentUser!.uid).setData(bookingData, merge: true) { err in
+                            //                            isLoading = false
+                            
+                            if let err = err {
+                                //                                errorMessage = "Account created but failed to save profile: \(err.localizedDescription)"
+                                print("❌ Firestore Error: \(err.localizedDescription)")
+                                return
+                            }
+                            navigateToSuccessScreenVar = true
+//                            move to sucesful screen pass data from here to sucessfulscreen
+                            
+                            print("✅ User profile saved to Firestore successfully")
+                            // Dismiss the sign-up view on success
+                            //                            dismiss()
+                        }
+               
+        
+                        //end connect fire base
+                        
                         if userModelPay?.id == nil {
                             isLoginAlready = false
                             showLoginPopup = true
