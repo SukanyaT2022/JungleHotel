@@ -9,16 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-
+//        bottom tab bar
+        TabView {
             MainScreenView()
-//            PaymentView(hotelModelPayment: HotelModel(hotelNameType: "", latitude: "", longitude: "", contactNumber: "", address: "", roomObj: []), roomPayment: Room(roomAvailbility: "", roomDetail: "", roomImage: [], roomName: "", roomPrice: 0, roomRating: 0.0), checkinDatePayment: Date(), checkoutDatePayment: Date())
-//           
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+          BookingBottomView()
+                .tabItem {
+                    Label("Booking", systemImage: "suitcase")
+                     
+                }
+             
+         
+            }//close tabview
+//        change color icon below
+        .tint(Color(.green))
         }
        
-//        padding to the mainscreen
-            .padding(.horizontal, 20)
-    }
 }
 
 #Preview {

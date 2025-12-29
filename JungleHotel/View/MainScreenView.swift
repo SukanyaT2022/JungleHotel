@@ -47,21 +47,33 @@ struct MainScreenView: View {
                 ScrollView{
                     ZStack(alignment: .top) {
                         // Background content that can scroll
+//                        contentview conttrol the room type square box
                         contentView
-                            .padding(.top, 150) // move the card view down from input box- on the main view- Add padding to account for sticky header
+                            .padding(.top,100) // move the card view down from input box- on the main view- Add padding to account for sticky header
                         
-                        // Sticky header
-                        VStack(spacing: 0) {
+                        // Sticky header include search bar date and howmany people
+                        VStack(spacing: 20) {
+//                            header include search bar date and howmany people
                             headerView
+                                .padding(.bottom, 50)
                             Spacer()
                         }
                     }
                 }//close scrollview
-                //navigationbarhiden always need to be in navigation stack
-                .navigationBarHidden(true)
-                
+                .navigationTitle("Jungle Hotels")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(.green)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        filterButton
+                    }
+                }
             }//close screlol view
-            
+          
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .task {
                 await loadData()
             }
@@ -69,9 +81,6 @@ struct MainScreenView: View {
                 Task { await loadData() }
             }
         }
-//        search box native
-        .searchable(text: $searchText, placement: .toolbar)
-//        .background(.ultraThinMaterial)
         .background(.ultraThickMaterial)
         
       
@@ -120,35 +129,17 @@ struct MainScreenView: View {
         }
     }
     
-    // MARK: - Pinterest-style Header View
+    // MARK: - Header View (Date and Guest Picker only)
     private var headerView: some View {
         VStack(spacing: 12) {
-            // Top section with logo and filter button
-            HStack {
-                navigationTitleView
-                
-                Spacer()
-                
-                filterButton
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            
-            // Custom search bar
-//            customSearchBar
-            
             // Custom date and guest picker
             customDateGuestPicker
                 .padding(.bottom, 12)
         }
         .background(
-            
             Color(.systemBackground)
                 .ignoresSafeArea(.all, edges: .top)
         )
-        .safeAreaInset(edge: .top) {
-            Color.clear.frame(height: 0)
-        }
     }
     
     // MARK: - Custom Search Bar

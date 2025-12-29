@@ -25,7 +25,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     
-    // Configure Firebase
+    // Configure Firebase -- important mke app app connect
     FirebaseApp.configure()
     
     // Configure Google Sign-In with client ID from Info.plist
@@ -85,7 +85,9 @@ struct JungleHotelApp: App {
 
   var body: some Scene {
     WindowGroup {
-   ContentView()
+//        SuccessBookView(bookingData: [:])
+//        MainScreenView()
+        ContentView()
     }
 //      step 8 line below for swiftdata
     .modelContainer(for: HotelSwiftDataModel.self)

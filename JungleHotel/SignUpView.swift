@@ -66,7 +66,7 @@ struct SignUpView: View {
                         InputCompView(
                             textLabel: "Email",
                             textValue: $email,
-                            placeholder: "you@example.com",
+                            placeholder: "Emal",
                             keyboardType: .emailAddress,
                             icon: "envelope"
                         )

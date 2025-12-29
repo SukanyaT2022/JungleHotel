@@ -191,7 +191,7 @@ struct PopUpLoginView: View {
                             .foregroundColor(.gray)
                             .frame(width: 20)
                         
-                        TextField("example@gmail.com", text: $email)
+                        TextField("Enter your email", text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                             .font(.system(size: 15))
