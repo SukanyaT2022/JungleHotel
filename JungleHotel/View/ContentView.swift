@@ -20,7 +20,11 @@ struct ContentView: View {
                     Label("Booking", systemImage: "suitcase")
                      
                 }
-             
+            ProfileView()
+                  .tabItem {
+                      Label("Profile", systemImage: "person")
+                       
+                  }
          
             }//close tabview
 //        change color icon below

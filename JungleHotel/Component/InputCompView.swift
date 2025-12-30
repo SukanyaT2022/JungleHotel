@@ -17,6 +17,7 @@ struct InputCompView: View {
     var icon: String? = nil
     var showPasswordToggle: Bool = false
     @State private var isPasswordVisible: Bool = false
+    var enableEditing: Bool = true
     
     // Initializer for external binding
     init(
@@ -27,7 +28,8 @@ struct InputCompView: View {
         isSecure: Bool = false,
         keyboardType: UIKeyboardType = .default,
         icon: String? = nil,
-        showPasswordToggle: Bool = false
+        showPasswordToggle: Bool = false,
+        enableEditing: Bool = true
     ) {
         self.textLabel = textLabel
         self._textValue = textValue
@@ -37,6 +39,7 @@ struct InputCompView: View {
         self.keyboardType = keyboardType
         self.icon = icon
         self.showPasswordToggle = showPasswordToggle
+        self.enableEditing = enableEditing
     }
     
     var body: some View {
@@ -64,11 +67,15 @@ struct InputCompView: View {
                         .textFieldStyle(.plain)
                         .keyboardType(keyboardType)
                         .autocapitalization(keyboardType == .emailAddress ? .allCharacters : .sentences)
+                    //for edit file
+                        .disabled(!enableEditing)
                 } else {
                     TextField(placeholder, text: $textValue)
                         .textFieldStyle(.plain)
                         .keyboardType(keyboardType)
                         .autocapitalization(keyboardType == .emailAddress ? .allCharacters : .sentences)
+                    //for edit file
+                        .disabled(!enableEditing)
                 }
                 
                 // Password visibility toggle
