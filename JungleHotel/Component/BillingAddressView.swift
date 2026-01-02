@@ -15,17 +15,17 @@ struct BillingAddressView: View {
     @State private var selectedCityName: String? // City.name
     @State private var userName: String = ""
     
-    private var selectedCountry: Country? {
+    private var selectedCountryModel: Country? {
         guard let code = selectedCountryCode else { return nil }
         return apiService.countries.first { $0.iso2 == code }
     }
-    
-    private var selectedState: StateModel? {
+
+    private var selectedStateModel: StateModel? {
         guard let code = selectedStateCode else { return nil }
-        return apiService.states.first { $0.state_code == code }
+        return apiService.states.first { $0.iso2 == code }
     }
-    
-    private var selectedCity: City? {
+
+    private var selectedCityModel: City? {
         guard let name = selectedCityName else { return nil }
         return apiService.cities.first { $0.name == name }
     }
@@ -39,10 +39,25 @@ struct BillingAddressView: View {
                 .font(.title3)
                 .bold()
             
+            // Local bindings to reduce type-checking complexity
+            let countrySelection = Binding<String?>(
+                get: { selectedCountryCode },
+                set: { selectedCountryCode = $0 }
+            )
+            let stateSelection = Binding<String?>(
+                get: { selectedStateCode },
+                set: { selectedStateCode = $0 }
+            )
+            let citySelection = Binding<String?>(
+                get: { selectedCityName },
+                set: { selectedCityName = $0 }
+            )
+            
             InputCompView(
                 textLabel: "Name",
                 textValue: $userName,
                 placeholder: "Enter full name",
+                keyboardType: .default,
                 icon: "person"
             )
             // Country Picker
@@ -52,12 +67,7 @@ struct BillingAddressView: View {
                     Text("*").foregroundStyle(.red)
                 }
 
-                Picker("Country", selection: Binding(
-                    get: { selectedCountryCode },
-                    set: { newValue in
-                        selectedCountryCode = newValue
-                    }
-                )) {
+                Picker("Country", selection: countrySelection) {
                     Text("Select Country").tag(nil as String?)
                     ForEach(apiService.countries) { country in
                         Text(country.name).tag(country.iso2 as String?)
@@ -66,13 +76,11 @@ struct BillingAddressView: View {
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .onChange(of: selectedCountryCode) { oldValue, newValue in
-                    // Reset dependent selections and fetch states
                     selectedStateCode = nil
                     selectedCityName = nil
                     if let code = newValue {
                         Task { await apiService.fetchStates(for: code) }
                     } else {
-                        // Clear lists when no selection
                         apiService.states = []
                         apiService.cities = []
                     }
@@ -83,7 +91,8 @@ struct BillingAddressView: View {
             InputCompView(
                 textLabel: "Address",
                 textValue: $address,
-                placeholder: "Enter street address"
+                placeholder: "Enter street address",
+                keyboardType: .default
             )
             
             // State Picker
@@ -95,9 +104,9 @@ struct BillingAddressView: View {
 
                 if selectedCountryCode != nil && apiService.states.isEmpty && !apiService.isLoading {
                     // Show text field if no states available
-                    TextField("Enter state/province", text: Binding(
+                    TextField("Enter state/province", text: Binding<String>(
                         get: { selectedStateCode ?? "" },
-                        set: { selectedStateCode = $0.isEmpty ? nil : $0 }
+                        set: { value in selectedStateCode = value.isEmpty ? nil : value }
                     ))
                     .textFieldStyle(.plain)
                     .padding(.horizontal, 12)
@@ -109,13 +118,10 @@ struct BillingAddressView: View {
                     )
                     .cornerRadius(10)
                 } else {
-                    Picker("State", selection: Binding(
-                        get: { selectedStateCode },
-                        set: { newValue in selectedStateCode = newValue }
-                    )) {
+                    Picker("State", selection: stateSelection) {
                         Text("Select State").tag(nil as String?)
                         ForEach(apiService.states) { state in
-                            Text(state.name).tag(state.state_code as String?)
+                            Text(state.name).tag(state.iso2 as String?)
                         }
                     }
                     .pickerStyle(.menu)
@@ -140,9 +146,9 @@ struct BillingAddressView: View {
 
                 if selectedStateCode != nil && apiService.cities.isEmpty && !apiService.isLoading {
                     // Show text field if no cities available
-                    TextField("Enter city", text: Binding(
+                    TextField("Enter city", text: Binding<String>(
                         get: { selectedCityName ?? "" },
-                        set: { selectedCityName = $0.isEmpty ? nil : $0 }
+                        set: { value in selectedCityName = value.isEmpty ? nil : value }
                     ))
                     .textFieldStyle(.plain)
                     .padding(.horizontal, 12)
@@ -154,10 +160,7 @@ struct BillingAddressView: View {
                     )
                     .cornerRadius(10)
                 } else {
-                    Picker("City", selection: Binding(
-                        get: { selectedCityName },
-                        set: { newValue in selectedCityName = newValue }
-                    )) {
+                    Picker("City", selection: citySelection) {
                         Text("Select City").tag(nil as String?)
                         ForEach(apiService.cities) { city in
                             Text(city.name).tag(city.name as String?)
@@ -165,11 +168,6 @@ struct BillingAddressView: View {
                     }
                     .pickerStyle(.menu)
                     .disabled(selectedStateCode == nil || apiService.cities.isEmpty)
-                    
-                    .onChange(of: selectedCityName) { oldValue, newValue in
-                        selectedCityName = newValue
-                       
-                    }
                 }
             }
             
@@ -218,3 +216,4 @@ struct BillingAddressView: View {
             .padding()
     }
 }
+

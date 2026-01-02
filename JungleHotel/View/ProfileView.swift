@@ -6,10 +6,16 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 import FirebaseFirestore
 import FirebaseAuth
+//photoui help to select photos from gallery
+import PhotosUI
 
 struct ProfileView: View {
+    @State private var selectedImage: PhotosPickerItem?
+    @State private var profileImage: UIImage?
+    
     // Individual state properties for binding to InputCompView
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -41,7 +47,64 @@ struct ProfileView: View {
         }
      
     }
+    // Convert selection to UIImage
+        func loadImage() {
+            Task {
+                if let data = try? await selectedImage?.loadTransferable(type: Data.self) {
+                    profileImage = UIImage(data: data)
+                }
+            }
+        }
     
+    //uploadImageFunc connecto camera icon -forebase-- can be reuse for other project.
+    func uploadImageFunc(){
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No authenticated user.")
+            return
+        }
+        //if use click camera and select image or not - check if image there - if image there go to imageData
+        guard let uiImage = self.profileImage else {
+            //if no image donot go beyound - if have image go beyond to return
+            print("No profile image selected.")
+            return
+        }
+        guard let imageData = uiImage.jpegData(compressionQuality: 0.8) else {
+            print("Failed to create JPEG data from image.")
+            return
+        }
+        let storage = Storage.storage()
+        let storageRef = storage.reference()
+        let fileName = UUID().uuidString + ".jpg"
+        let imageRef = storageRef.child("profile_images/\(userId)/\(fileName)")
+
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+//below is method imageRef create a path to upload to firebase storage
+        imageRef.putData(imageData, metadata: metadata) { metadata, error in
+            if let error = error {
+                print("Upload failed: \(error.localizedDescription)")
+                return
+            }
+            imageRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to get download URL: \(error.localizedDescription)")
+                    return
+                }
+                if let url = url {
+                    print("Image uploaded successfully. URL: \(url.absoluteString)")
+                    // Optionally, update Firestore user document with the image URL
+                    let db = Firestore.firestore()
+                    db.collection("users").document(userId).updateData(["profileImageURL": url.absoluteString]) { err in
+                        if let err = err {
+                            print("Failed to save image URL to Firestore: \(err.localizedDescription)")
+                        } else {
+                            print("Saved image URL to Firestore.")
+                        }
+                    }
+                }
+            }
+        }
+    }
     var body: some View {
         VStack(spacing: 16) {
             Text("Profile")
@@ -50,7 +113,7 @@ struct ProfileView: View {
             // start  Image circle and camera
             ZStack(alignment: .bottomTrailing) {
                 // Round profile image
-                Image(systemName: "person.fill")
+                Image(uiImage: profileImage ?? UIImage(imageLiteralResourceName: "dog"))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 120, height: 120)
@@ -62,16 +125,25 @@ struct ProfileView: View {
                     )
 
                 // Camera icon button
-                ZStack {
-                    Circle()
-                        .fill(Color.blue)
-                        .frame(width: 36, height: 36)
-
-                    Image(systemName: "camera.fill")
-                        .foregroundColor(.white)
-                        .font(.system(size: 16))
-                }
-                .offset(x: -5, y: -5)
+                
+                //help to change image when click camera
+                PhotosPicker(selection: $selectedImage, matching: .images) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue)
+                            .frame(width: 36, height: 36)
+                        Image(systemName: "camera.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 16))
+                    }
+                    .offset(x: -5, y: -5)
+                    //help to change image when click camera
+                    .onChange(of: selectedImage) { newValue in
+                        loadImage()
+                    }
+          
+                            }
+                            
             }
             HStack{
                 Spacer()
@@ -80,8 +152,12 @@ struct ProfileView: View {
                     //when click edut btn it true so we can change info
                    enableFieldEditing = true
                 }
-                .frame(width: 100)
+                .frame(width: 100
+                )
                 
+            }//close hstack
+            ButtonCompView(textBtn: "Upload Image") {
+                uploadImageFunc()
             }
           
             VStack{

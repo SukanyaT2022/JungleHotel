@@ -8,75 +8,40 @@
 import Foundation
 
 // MARK: - Models
+// Models.swift
+import Foundation
+
 struct Country: Codable, Identifiable, Hashable {
-    let id: Int
+    let id: String
     let name: String
     let iso2: String
-    let iso3: String?
-    let phonecode: String?
-    let capital: String?
-    let currency: String?
-    let currency_name: String?
-    let currency_symbol: String?
-    let region: String?
-    let subregion: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case iso2
+    }
 }
 
 struct StateModel: Codable, Identifiable, Hashable {
-    let id: Int
+    let id: String
     let name: String
-    let state_code: String // This is the iso2 code from API
-    let country_code: String? // Not in API response, will be set manually
-    let country_name: String?
-    let type: String?
-    let latitude: String?
-    let longitude: String?
+    let iso2: String
     
-    // Custom coding keys - API uses "iso2" for state code
     enum CodingKeys: String, CodingKey {
-        case id, name
-        case state_code = "iso2" // Map iso2 to state_code
-        case country_name
-        case type
-        case latitude
-        case longitude
-    }
-    
-    // Custom decoder to handle the API structure
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        state_code = try container.decode(String.self, forKey: .state_code) // iso2
-        country_code = nil // Not provided by API
-        country_name = try? container.decode(String.self, forKey: .country_name)
-        type = try? container.decode(String.self, forKey: .type)
-        latitude = try? container.decode(String.self, forKey: .latitude)
-        longitude = try? container.decode(String.self, forKey: .longitude)
+        case id
+        case name
+        case iso2
     }
 }
 
 struct City: Codable, Identifiable, Hashable {
-    let id: Int
+    let id: String
     let name: String
-    let country_code: String?
-    let state_code: String?
-    let country_name: String?
-    let state_name: String?
-    let latitude: String?
-    let longitude: String?
     
-    // Custom decoder to handle missing or null values gracefully
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        country_code = try? container.decode(String.self, forKey: .country_code)
-        state_code = try? container.decode(String.self, forKey: .state_code)
-        country_name = try? container.decode(String.self, forKey: .country_name)
-        state_name = try? container.decode(String.self, forKey: .state_name)
-        latitude = try? container.decode(String.self, forKey: .latitude)
-        longitude = try? container.decode(String.self, forKey: .longitude)
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
     }
 }
 

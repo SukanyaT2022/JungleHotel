@@ -16,6 +16,7 @@
 		21A092B62E79C8DE00C2AF96 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092B52E79C8DE00C2AF96 /* FirebaseAppCheck */; };
 		21A092E22E79CAD700C2AF96 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 21A092E12E79CAD700C2AF96 /* FirebaseFirestore */; };
 		21E174FA2EBE4A4900A47214 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 21E174F92EBE4A4900A47214 /* GoogleSignIn */; };
+		21E2A6CE2F082D2B0071F853 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 21E2A6CD2F082D2B0071F853 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 				21A092B42E79C8DE00C2AF96 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
 				21A092B02E79C8DE00C2AF96 /* FirebaseAnalytics in Frameworks */,
 				21A092B22E79C8DE00C2AF96 /* FirebaseAnalyticsCore in Frameworks */,
+				21E2A6CE2F082D2B0071F853 /* FirebaseStorage in Frameworks */,
 				214D43252EC241FC006A737F /* GoogleSignInSwift in Frameworks */,
 				2118F76B2EF1BDA50094D8D9 /* FirebaseAuth in Frameworks */,
 				21A092B62E79C8DE00C2AF96 /* FirebaseAppCheck in Frameworks */,
@@ -163,6 +165,7 @@
 				21E174F92EBE4A4900A47214 /* GoogleSignIn */,
 				214D43242EC241FC006A737F /* GoogleSignInSwift */,
 				2118F76A2EF1BDA50094D8D9 /* FirebaseAuth */,
+				21E2A6CD2F082D2B0071F853 /* FirebaseStorage */,
 			);
 			productName = JungleHotel;
 			productReference = 21A21E232E5E05BD00DF48D4 /* JungleHotel.app */;
@@ -674,6 +677,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 215370B32EBD07F300CC367B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		21E2A6CD2F082D2B0071F853 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 21A092AC2E79C8DE00C2AF96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
