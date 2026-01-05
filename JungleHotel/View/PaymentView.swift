@@ -64,158 +64,179 @@ struct PaymentView: View {
     var body: some View {
         NavigationStack{
             
-        ScrollView{
-            
-            VStack(alignment: .leading, spacing: 20) {
-                Text("Your Information Payment")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                CheckinCompView(
-                    checkInDate: formatDate(checkinDatePayment),
-                    checkOutDate: formatDate(checkoutDatePayment),
-                    nights: numNight)
+            ScrollView{
                 
-                //                smallBoxComp(title: "Jungle Hotel", text: "Date check in and out", bgColor: Color.white)
-                //
-                //                smallBoxComp(title: "", text: "We price match on all hotels", bgColor: Color(hex: "#BFF4BE"))
-                HotelSummaryCompView(
-                    hotelImage: roomPayment.roomImage.first ?? "",
-                    hotelName: roomPayment.roomName,
-                    rating: Int(roomPayment.roomRating),
-                    reviewScore: 0.0,
-                    reviewCount: 0,
-                    address: hotelModelPayment.address,
-                )
-                BigBoxComp(
-                    //pay now
-                    topTitle: "Room price",
-                    topValue:  totalFunc().1,
-                    //pay later
-                    bottomText: "",
-                    bottomValue: totalFunc().0,
-                    bgColor: Color(hex: "#F5F5F5"),
-                    paymentCondition: "Pay Now", paymentConditionBelow: "Pay Later"
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Your Information Payment")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                    CheckinCompView(
+                        checkInDate: formatDate(checkinDatePayment),
+                        checkOutDate: formatDate(checkoutDatePayment),
+                        nights: numNight)
                     
-                )
-                smallBoxComp(title: "", text: "Service fee: You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms", bgColor: Color(hex: "#ffffff"))
-                
-                smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
-            
-                CheckBoxView(
-                    text: "I agree receive update and promotions about Jungle Hotel.",
-                    isChecked: $isPromotionsChecked,
-                    
-                ) {
-                    
-                }
-                BillingAddressView()
-                //    we bring pass datat fron payment method component credit card number and bring value here
-                
-                //cardnumber from payment methos biding
-                
-                //passdata cardnumber and puit it in creditcardNumber var in payment view
-                PaymentMethodComp(cardNumber: $creditCardNumber, isKeyboardFocused: $isKeyboardFocused)
-                
-                
-                let bookingData: [String: Any] = [
-                    "checkinDate": formatDate(checkinDatePayment),
-                    "checkoutDate": formatDate(checkoutDatePayment),
-                    "pricePerNight": pricePerNight,
-                    "totalPrice": pricePerNight * Int64(numNight),
-                ]
-                
-                //connect data to sucessful screen
-                NavigationLink(
-                    destination: SuccessBookView(
-                     bookingData: bookingData,
-                    ),
-                    isActive: $navigateToSuccessScreenVar
-                ) {
-                    EmptyView()
-                }
-                //end navigation link
-                
-                //submit button book now
-                ButtonCompView(textBtn: "Book Now",action: {
-                    
-                    if creditCardNumber.isEmpty {
-                        print("Please enter your credit card number")
-                        showAlert = true
-                        return
-                    }else{
-                        
-                        
-                        // start code connect firebase booking after successfull payment
-                        
-                        // Save user data save to Firestore
-                        let now = Timestamp(date: Date())
-                       
-                        
-                        db.collection("booking").document(Auth.auth().currentUser!.uid).setData(bookingData, merge: true) { err in
-                            //                            isLoading = false
-                            
-                            if let err = err {
-                                //                                errorMessage = "Account created but failed to save profile: \(err.localizedDescription)"
-                                print("❌ Firestore Error: \(err.localizedDescription)")
-                                return
-                            }
-                            navigateToSuccessScreenVar = true
-//                            move to sucesful screen pass data from here to sucessfulscreen
-                            
-                            print("✅ User profile saved to Firestore successfully")
-                            // Dismiss the sign-up view on success
-                            //                            dismiss()
-                        }
-               
-        
-                        //end connect fire base
-                        
-                        if userModelPay?.id == nil {
-                            isLoginAlready = false
-                            showLoginPopup = true
-                        }else{
-                            isLoginAlready = true
-                            showCompleteView = true
-                        }
-                    }
-                } )
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Validation Error"),
-                        message: Text("Please enter your credit card number"),
-                        dismissButton: .default(Text("OK"))
+                    //                smallBoxComp(title: "Jungle Hotel", text: "Date check in and out", bgColor: Color.white)
+                    //
+                    //                smallBoxComp(title: "", text: "We price match on all hotels", bgColor: Color(hex: "#BFF4BE"))
+                    HotelSummaryCompView(
+                        hotelImage: roomPayment.roomImage.first ?? "",
+                        hotelName: roomPayment.roomName,
+                        rating: Int(roomPayment.roomRating),
+                        reviewScore: 0.0,
+                        reviewCount: 0,
+                        address: hotelModelPayment.address,
                     )
-                }
-                
-            }// end vstack
-            .padding(.top, 20)
-            .padding(.horizontal, 10)
-        }//close scroll view
-        .onAppear{
-            for family in UIFont.familyNames.sorted() {
-                print("Family: \(family)")
-                let names = UIFont.fontNames(forFamilyName: family)
-                for name in names {
-                    print("   → \(name)")
+                    BigBoxComp(
+                        //pay now
+                        topTitle: "Room price",
+                        topValue:  totalFunc().1,
+                        //pay later
+                        bottomText: "",
+                        bottomValue: totalFunc().0,
+                        bgColor: Color(hex: "#F5F5F5"),
+                        paymentCondition: "Pay Now", paymentConditionBelow: "Pay Later"
+                        
+                    )
+                    smallBoxComp(title: "", text: "Service fee: You will be charged on 16 November 2025\n\nIncluded in total price: City tax 1%, Tax 7%, Service charge 10%\n\nYour currency selections affect the prices charged or displayed to you under these terms", bgColor: Color(hex: "#ffffff"))
+                    
+                    smallBoxComp(title: "", text: "We have only 4 rooms left", bgColor: Color(hex: "#BFF4BE"))
+                    
+                    CheckBoxView(
+                        text: "I agree receive update and promotions about Jungle Hotel.",
+                        isChecked: $isPromotionsChecked,
+                        
+                    ) {
+                        
+                    }
+                    BillingAddressView()
+                    //    we bring pass datat fron payment method component credit card number and bring value here
+                    
+                    //cardnumber from payment methos biding
+                    
+                    //passdata cardnumber and puit it in creditcardNumber var in payment view
+                    PaymentMethodComp(cardNumber: $creditCardNumber, isKeyboardFocused: $isKeyboardFocused)
+                    
+                    
+                    let bookingData: [String: Any] = [
+                        "checkinDate": formatDate(checkinDatePayment),
+                        "checkoutDate": formatDate(checkoutDatePayment),
+                        "pricePerNight": pricePerNight,
+                        "totalPrice": pricePerNight * Int64(numNight),
+                    ]
+                    
+                    //connect data to sucessful screen
+                    NavigationLink(
+                        destination: SuccessBookView(
+                            bookingData: bookingData,
+                        ),
+                        isActive: $navigateToSuccessScreenVar
+                    ) {
+                        EmptyView()
+                    }
+                    //end navigation link
+                    
+                    //submit button book now
+                    ButtonCompView(textBtn: "Book Now",action: {
+                        
+                        if creditCardNumber.isEmpty {
+                            print("Please enter your credit card number")
+                            showAlert = true
+                            return
+                        }else{
+                            
+                            
+                            // start code connect firebase booking after successfull payment
+                            
+                            // Save user data save to Firestore
+                            let now = Timestamp(date: Date())
+                            
+                            
+                            db.collection("booking").document(Auth.auth().currentUser!.uid).setData(bookingData, merge: true) { err in
+                                //                            isLoading = false
+                                
+                                if let err = err {
+                                    //                                errorMessage = "Account created but failed to save profile: \(err.localizedDescription)"
+                                    print("❌ Firestore Error: \(err.localizedDescription)")
+                                    return
+                                }
+                                navigateToSuccessScreenVar = true
+                                //                            move to sucesful screen pass data from here to sucessfulscreen
+                                
+                                print("✅ User profile saved to Firestore successfully")
+                                // Dismiss the sign-up view on success
+                                //                            dismiss()
+                            }
+                            
+                            
+                            //end connect fire base
+                            
+                            if Auth.auth().currentUser?.uid  == nil {
+                                isLoginAlready = false
+                                showLoginPopup = true
+                            }else{
+                                isLoginAlready = true
+                                showCompleteView = true
+                            }
+                        }
+                    } )
+                    .alert(isPresented: $showAlert) {
+                        Alert(
+                            title: Text("Validation Error"),
+                            message: Text("Please enter your credit card number"),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    }
+                    
+                }// end vstack
+                .padding(.top, 20)
+                .padding(.horizontal, 10)
+            }//close scroll view
+            .onAppear{
+                for family in UIFont.familyNames.sorted() {
+                    print("Family: \(family)")
+                    let names = UIFont.fontNames(forFamilyName: family)
+                    for name in names {
+                        print("   → \(name)")
+                    }
                 }
             }
-    }
-        .scrollIndicators(.hidden)
-        .scrollDismissesKeyboard(.interactively)
-        // hide scroll bar from scrool view
-        .onTapGesture {
-            isKeyboardFocused = false
-        }
-        .fullScreenCover(isPresented: $showLoginPopup) {
-            PopUpLoginView()
+            .scrollIndicators(.hidden)
+            .scrollDismissesKeyboard(.interactively)
+            // hide scroll bar from scrool view
+            .onTapGesture {
+                isKeyboardFocused = false
+            }
+            .fullScreenCover(isPresented: $showLoginPopup) {
+                if let userId = Auth.auth().currentUser?.uid  {
+                    let bookingData: [String: Any] = [
+                        "checkinDate": formatDate(checkinDatePayment),
+                        "checkoutDate": formatDate(checkoutDatePayment),
+                        "pricePerNight": pricePerNight,
+                        "totalPrice": pricePerNight * Int64(numNight),
+                    ]
+                    SuccessBookView(
+                        bookingData: bookingData)
+                }else{
+                 PopUpLoginView()
+                }
+                return EmptyView()
+            }
         }
         .fullScreenCover(isPresented: $showCompleteView) {
-            CompleteView()
+            let bookingData: [String: Any] = [
+                "checkinDate": formatDate(checkinDatePayment),
+                "checkoutDate": formatDate(checkoutDatePayment),
+                "pricePerNight": pricePerNight,
+                "totalPrice": pricePerNight * Int64(numNight),
+            ]
+            SuccessBookView(
+                bookingData: bookingData,
+            )
         }
     }
     }//close view
        
-}
+
 
 #Preview {
     // Lightweight mock types and data for preview to avoid initializer mismatches

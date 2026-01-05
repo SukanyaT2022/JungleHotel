@@ -9,8 +9,10 @@ import SwiftUI
 
 struct SuccessBookView: View {
 //    we bring booking data from payment view line 131 to here.
+    @State private var goToHomeScreen: Bool = false
     var bookingData: [String: Any]
     var body: some View {
+        NavigationStack {
         ZStack {
             Image("mountainview")
                 .resizable()
@@ -30,6 +32,14 @@ struct SuccessBookView: View {
                 Text("Check-out Date: \(checkout)")
                 if let pricePerNight { Text("Price per night: \(pricePerNight)") }
                 if let totalPrice { Text("Total price: \(totalPrice)") }
+               
+                Button("Back to HomeScreen") {
+                    goToHomeScreen = true
+                }
+                .navigationDestination(isPresented: $goToHomeScreen) {
+                    ContentView()
+                }
+                .padding(.top,40)
             }
             .padding()
             .background(
@@ -38,9 +48,14 @@ struct SuccessBookView: View {
                     .fill(.windowBackground)
             )
             .padding()
+//            button go home screen
+           
+                     
+                    }
+                }
         }
     }
-}
+
 
 #Preview {
     SuccessBookView(bookingData: [
