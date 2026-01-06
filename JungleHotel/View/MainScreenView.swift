@@ -60,9 +60,14 @@ struct MainScreenView: View {
                         }
                     }
                 }//close scrollview
-                .navigationTitle("Jungle Hotels")
+//                .navigationTitle("Jungle Hotels")
+                
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("iungle hotel")
+                            .font(.custom("GravitasOne-Regular", size: 20))
+                    }
                     ToolbarItem(placement: .topBarLeading) {
                         Image(systemName: "leaf.fill")
                             .foregroundColor(.green)
@@ -70,7 +75,11 @@ struct MainScreenView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         filterButton
                     }
-                }
+                }//close toolbar
+//                hide background white logo
+//                .toolbarBackground(.hidden, for: .navigationBar)
+//                .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+                
             }//close screlol view
           
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))

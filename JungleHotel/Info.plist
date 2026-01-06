@@ -15,5 +15,9 @@
 	<string>849426459397-sautub05pcsa4da9tueabsdc5caf7uki.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.849426459397-sautub05pcsa4da9tueabsdc5caf7uki</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>GravitasOne-Regular.ttf</string>
+	</array>
 </dict>
 </plist>
