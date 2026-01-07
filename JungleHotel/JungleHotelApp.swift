@@ -28,6 +28,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     // Configure Firebase -- important mke app app connect
     FirebaseApp.configure()
     
+    printAllFonts() // Debug: Check if Montserrat is loaded
+
+    
     // Configure Google Sign-In with client ID from Info.plist
     if let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String {
         GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)

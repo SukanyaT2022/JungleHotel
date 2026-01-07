@@ -66,7 +66,7 @@ struct MainScreenView: View {
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         Text("iungle hotel")
-                            .font(.custom("GravitasOne-Regular", size: 20))
+                            .font(.custom("MontserratUnderline-Regular", size: 20))
                     }
                     ToolbarItem(placement: .topBarLeading) {
                         Image(systemName: "leaf.fill")
