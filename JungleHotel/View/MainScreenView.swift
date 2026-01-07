@@ -65,7 +65,7 @@ struct MainScreenView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        Text("iungle hotel")
+                        Text("Jungle hotel")
                             .font(.custom("MontserratUnderline-Regular", size: 20))
                     }
                     ToolbarItem(placement: .topBarLeading) {
@@ -719,7 +719,7 @@ struct FilterOptionsView: View {
                     .padding(30)
                 }
             }
-            .navigationBarHidden(true)
+            .navigationBarHidden(false)
             .ignoresSafeArea(.all, edges: .top)
         }
     }
