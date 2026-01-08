@@ -8,25 +8,26 @@
 import SwiftUI
 
 struct SuccessBookView: View {
-//    we bring booking data from payment view line 131 to here.
+    // We bring booking data from payment view line 131 to here.
     @State private var goToHomeScreen: Bool = false
     var bookingData: [String: Any]
+
     var body: some View {
         NavigationStack {
-        ZStack {
-            Image("mountainview")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .ignoresSafeArea()
+            ZStack {
+                Image("mountainview")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 12) {
-                Text("Successfully Booked!")
-                    .font(.title).bold()
+                VStack(spacing: 12) {
+                    Text("Successfully Booked!")
+                        .font(.title).bold()
 
-                let checkin = bookingData["checkinDate"] as? String ?? "—"
-                let checkout = bookingData["checkoutDate"] as? String ?? "—"
-                let pricePerNight = bookingData["pricePerNight"] as? Int64
-                let totalPrice = bookingData["totalPrice"] as? Int64
+                    let checkin = bookingData["checkinDate"] as? String ?? "—"
+                    let checkout = bookingData["checkoutDate"] as? String ?? "—"
+                    let pricePerNight = bookingData["pricePerNight"] as? Int64
+                    let totalPrice = bookingData["totalPrice"] as? Int64
 
                 Text("Check-in Date: \(checkin)")
                 Text("Check-out Date: \(checkout)")
@@ -52,9 +53,22 @@ struct SuccessBookView: View {
            
                      
                     }
+                    .navigationDestination(isPresented: $goToHomeScreen) {
+                        MainScreenView()
+                    }
+                    .padding(.top, 40)
                 }
-        }
-    }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.windowBackground)
+                )
+                .padding()
+            } // close ZStack
+        
+        } // close NavigationStack
+       
+ 
 
 
 #Preview {
