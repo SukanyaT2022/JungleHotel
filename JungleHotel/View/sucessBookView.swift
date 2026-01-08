@@ -37,7 +37,7 @@ struct SuccessBookView: View {
                     goToHomeScreen = true
                 }
                 .navigationDestination(isPresented: $goToHomeScreen) {
-                    ContentView()
+                   MainScreenView()
                 }
                 .padding(.top,40)
             }
