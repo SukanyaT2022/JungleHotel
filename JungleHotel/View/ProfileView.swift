@@ -23,6 +23,20 @@ struct ProfileView: View {
     @State private var username: String = ""
     @State private var country: String = ""
     @State var enableFieldEditing : Bool = false
+    @State private var logoutError: String?
+    @State private var showLogoutConfirm = false
+    @State private var showNavigateToLogin = false
+    func logoutFunc(){
+        do {
+            try Auth.auth().signOut()
+            showNavigateToLogin = true
+            
+
+        } catch {
+            print("Failed to sign out: \(error.localizedDescription)")
+            logoutError = error.localizedDescription
+        }
+    }
     func updateUserDetails(){
         let db = Firestore.firestore()
         db.collection("users").document(Auth.auth().currentUser?.uid ?? " ").updateData(
@@ -106,9 +120,12 @@ struct ProfileView: View {
         }
     }
     var body: some View {
+        NavigationStack {
+            
+    
         VStack(spacing: 16) {
-            Text("Profile")
-                .font(.title2)
+//            Text("Profile")
+//                .font(.title2)
 
             // start  Image circle and camera
             ZStack(alignment: .bottomTrailing) {
@@ -146,15 +163,26 @@ struct ProfileView: View {
                             
             }
             HStack{
-                Spacer()
+           
                 // end  Image circle and camera- zstack
                 ButtonCompView(textBtn: "Edit") {
                     //when click edut btn it true so we can change info
                    enableFieldEditing = true
                 }
-                .frame(width: 100
-                )
-                
+                .frame(width:70, height: 44)
+             Spacer()
+                Image(systemName: "rectangle.portrait.and.arrow.forward")
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.green)
+                    .onTapGesture {
+                        showLogoutConfirm = true
+                    }
+                    .navigationDestination(isPresented:      $showNavigateToLogin) {
+                       PopUpLoginView()
+                    }
+               
             }//close hstack
             ButtonCompView(textBtn: "Upload Image") {
                 uploadImageFunc()
@@ -205,11 +233,23 @@ struct ProfileView: View {
             }
         }// close paernt
         .padding()
+        }//close navigation stack
        
         //on appear is method in every view load when first time load-- on appear when we need to get data or animation- call third party sdk
         .onAppear{
-//            below function help to get datat from firebase
+            //            below function help to get datat from firebase
             getUserDetails()
+        }
+        .alert("Logout Failed", isPresented: .constant(logoutError != nil), presenting: logoutError) { _ in
+            Button("OK") { logoutError = nil }
+        } message: { error in
+            Text(error)
+        }
+        .alert("Are you sure you want to log out?", isPresented: $showLogoutConfirm) {
+            Button("Cancel", role: .cancel) { }
+            Button("Log Out", role: .destructive) {
+                logoutFunc()
+            }
         }
     }
 }
@@ -217,3 +257,4 @@ struct ProfileView: View {
 #Preview {
     ProfileView()
 }
+
