@@ -118,6 +118,7 @@ struct PaymentView: View {
                     
                     
                     let bookingData: [String: Any] = [
+                        "userId": Auth.auth().currentUser?.uid ?? "",
                         "checkinDate": formatDate(checkinDatePayment),
                         "checkoutDate": formatDate(checkoutDatePayment),
                         "pricePerNight": pricePerNight,
@@ -147,24 +148,14 @@ struct PaymentView: View {
                             
                             // start code connect firebase booking after successfull payment
                             
-                            // Save user data save to Firestore
-                            let now = Timestamp(date: Date())
-                            
-                            
-                            db.collection("booking").document(Auth.auth().currentUser!.uid).setData(bookingData, merge: true) { err in
-                                //                            isLoading = false
-                                
+                            // Save booking to Firestore - using addDocument to allow multiple bookings per user
+                            db.collection("booking").addDocument(data: bookingData) { err in
                                 if let err = err {
-                                    //                                errorMessage = "Account created but failed to save profile: \(err.localizedDescription)"
                                     print("❌ Firestore Error: \(err.localizedDescription)")
                                     return
                                 }
                                 navigateToSuccessScreenVar = true
-                                //                            move to sucesful screen pass data from here to sucessfulscreen
-                                
-                                print("✅ User profile saved to Firestore successfully")
-                                // Dismiss the sign-up view on success
-                                //                            dismiss()
+                                print("✅ Booking saved to Firestore successfully")
                             }
                             
                             

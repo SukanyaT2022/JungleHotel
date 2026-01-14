@@ -25,13 +25,21 @@ struct ProfileView: View {
     @State var enableFieldEditing : Bool = false
     @State private var logoutError: String?
     @State private var showLogoutConfirm = false
-    @State private var showNavigateToLogin = false
+    @State private var showLoginSheet = false
+    
+    // Track if user is logged in - this will update when auth state changes
+    @State private var isLoggedIn: Bool = Auth.auth().currentUser != nil
     func logoutFunc(){
         do {
             try Auth.auth().signOut()
-            showNavigateToLogin = true
-            
-
+            // Clear user data
+            firstName = ""
+            lastName = ""
+            email = ""
+            username = ""
+            country = ""
+            profileImage = nil
+            // isLoggedIn will be updated by the auth state listener
         } catch {
             print("Failed to sign out: \(error.localizedDescription)")
             logoutError = error.localizedDescription
@@ -40,8 +48,8 @@ struct ProfileView: View {
     func updateUserDetails(){
         let db = Firestore.firestore()
         db.collection("users").document(Auth.auth().currentUser?.uid ?? " ").updateData(
-        (["firstName": self.firstName, "lastName": self.lastName, "email": self.email, "username": self.username, "country": self.country , "city": "NYC"] as [String : Any]))
-     
+            (["firstName": self.firstName, "lastName": self.lastName, "email": self.email, "username": self.username, "country": self.country , "city": "NYC"] as [String : Any]))
+        
     }
     func getUserDetails() {
         let db = Firestore.firestore()
@@ -59,16 +67,16 @@ struct ProfileView: View {
                 print("Document does not exist")
             }
         }
-     
+        
     }
     // Convert selection to UIImage
-        func loadImage() {
-            Task {
-                if let data = try? await selectedImage?.loadTransferable(type: Data.self) {
-                    profileImage = UIImage(data: data)
-                }
+    func loadImage() {
+        Task {
+            if let data = try? await selectedImage?.loadTransferable(type: Data.self) {
+                profileImage = UIImage(data: data)
             }
         }
+    }
     
     //uploadImageFunc connecto camera icon -forebase-- can be reuse for other project.
     func uploadImageFunc(){
@@ -90,10 +98,10 @@ struct ProfileView: View {
         let storageRef = storage.reference()
         let fileName = UUID().uuidString + ".jpg"
         let imageRef = storageRef.child("profile_images/\(userId)/\(fileName)")
-
+        
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
-//below is method imageRef create a path to upload to firebase storage
+        //below is method imageRef create a path to upload to firebase storage
         imageRef.putData(imageData, metadata: metadata) { metadata, error in
             if let error = error {
                 print("Upload failed: \(error.localizedDescription)")
@@ -122,123 +130,168 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             
-    
-        VStack(spacing: 16) {
-//            Text("Profile")
-//                .font(.title2)
-
-            // start  Image circle and camera
-            ZStack(alignment: .bottomTrailing) {
-                // Round profile image
-                Image(uiImage: profileImage ?? UIImage(imageLiteralResourceName: "dog"))
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 120, height: 120)
-                    .clipShape(Circle())
-                    .foregroundColor(.gray)
-                    .background(
-                        Circle()
-                            .fill(Color.gray.opacity(0.2))
-                    )
-
-                // Camera icon button
-                
-                //help to change image when click camera
-                PhotosPicker(selection: $selectedImage, matching: .images) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.blue)
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "camera.fill")
+            if !isLoggedIn {
+                // Not logged in - show login prompt
+                VStack(spacing: 20) {
+                    Image(systemName: "person.crop.circle.badge.questionmark")
+                        .font(.system(size: 80))
+                        .foregroundColor(.gray)
+                    
+                    Text("Not Logged In")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text("Please log in to view your profile")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Button {
+                        showLoginSheet = true
+                    } label: {
+                        Text("Log In")
+                            .font(.headline)
                             .foregroundColor(.white)
-                            .font(.system(size: 16))
+                            .frame(width: 200, height: 50)
+                            .background(Color.green)
+                            .cornerRadius(12)
                     }
-                    .offset(x: -5, y: -5)
-                    //help to change image when click camera
-                    .onChange(of: selectedImage) { newValue in
-                        loadImage()
-                    }
-          
+                }
+                .fullScreenCover(isPresented: $showLoginSheet) {
+                    PopUpLoginView()
+                }
+                
+            } else {
+                
+                VStack(spacing: 16) {
+                    //            Text("Profile")
+                    //                .font(.title2)
+                    
+                    // start  Image circle and camera
+                    ZStack(alignment: .bottomTrailing) {
+                        // Round profile image
+                        Image(uiImage: profileImage ?? UIImage(imageLiteralResourceName: "dog"))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 120, height: 120)
+                            .clipShape(Circle())
+                            .foregroundColor(.gray)
+                            .background(
+                                Circle()
+                                    .fill(Color.gray.opacity(0.2))
+                            )
+                        
+                        // Camera icon button
+                        
+                        //help to change image when click camera
+                        PhotosPicker(selection: $selectedImage, matching: .images) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.blue)
+                                    .frame(width: 36, height: 36)
+                                Image(systemName: "camera.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16))
+                            }
+                            .offset(x: -5, y: -5)
+                            //help to change image when click camera
+                            .onChange(of: selectedImage) { newValue in
+                                loadImage()
                             }
                             
-            }
-            HStack{
-           
-                // end  Image circle and camera- zstack
-                ButtonCompView(textBtn: "Edit") {
-                    //when click edut btn it true so we can change info
-                   enableFieldEditing = true
-                }
-                .frame(width:70, height: 44)
-             Spacer()
-                Image(systemName: "rectangle.portrait.and.arrow.forward")
-                    .resizable()
-                    .frame(width: 35, height: 35)
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.green)
-                    .onTapGesture {
-                        showLogoutConfirm = true
+                        }
+                        
                     }
-                    .navigationDestination(isPresented:      $showNavigateToLogin) {
-                       PopUpLoginView()
+                    HStack{
+                        
+                        // end  Image circle and camera- zstack
+                        ButtonCompView(textBtn: "Edit") {
+                            //when click edut btn it true so we can change info
+                            enableFieldEditing = true
+                        }
+                        .frame(width:70, height: 44)
+                        Spacer()
+                        Image(systemName: "rectangle.portrait.and.arrow.forward")
+                            .resizable()
+                            .frame(width: 35, height: 35)
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.green)
+                            .onTapGesture {
+                                showLogoutConfirm = true
+                            }
+                        
+                    }//close hstack
+                    ButtonCompView(textBtn: "Upload Image") {
+                        uploadImageFunc()
                     }
-               
-            }//close hstack
-            ButtonCompView(textBtn: "Upload Image") {
-                uploadImageFunc()
-            }
-          
-            VStack{
-                InputCompView(
-                    textLabel: "First Name",
-                    textValue: $firstName,
-                    placeholder: "Enter your first name",
-                    icon: "person",
-                    enableEditing: enableFieldEditing
                     
-//                    enableEditing: enableFieldEditing
-                    //enableediting from input compnent : on the back from var on the top of this scrren
-                )
-                InputCompView(
-                    textLabel: "Last Name",
-                    textValue: $lastName,
-                    placeholder: "Enter your last name",
-                    icon: "person",
-                    enableEditing: enableFieldEditing
-                )
-                InputCompView(
-                    textLabel: "Email",
-                    textValue: $email,
-                    placeholder: "Enter your email",
-                    icon: "envelope",
-                    enableEditing: enableFieldEditing
-                )
-                InputCompView(
-                    textLabel: "Username",
-                    textValue: $username,
-                    placeholder: "Enter your username",
-                    icon: "person",
-                    enableEditing: enableFieldEditing
-                )
-                InputCompView(
-                    textLabel: "Country",
-                    textValue: $country,
-                    placeholder: "Enter your country",
-                    icon: "globe",
-                    enableEditing: enableFieldEditing
-                )
-                ButtonCompView(textBtn: "Submit") {
-                   updateUserDetails()
+                    VStack{
+                        InputCompView(
+                            textLabel: "First Name",
+                            textValue: $firstName,
+                            placeholder: "Enter your first name",
+                            icon: "person",
+                            enableEditing: enableFieldEditing
+                            
+                            //                    enableEditing: enableFieldEditing
+                            //enableediting from input compnent : on the back from var on the top of this scrren
+                        )
+                        InputCompView(
+                            textLabel: "Last Name",
+                            textValue: $lastName,
+                            placeholder: "Enter your last name",
+                            icon: "person",
+                            enableEditing: enableFieldEditing
+                        )
+                        InputCompView(
+                            textLabel: "Email",
+                            textValue: $email,
+                            placeholder: "Enter your email",
+                            icon: "envelope",
+                            enableEditing: enableFieldEditing
+                        )
+                        InputCompView(
+                            textLabel: "Username",
+                            textValue: $username,
+                            placeholder: "Enter your username",
+                            icon: "person",
+                            enableEditing: enableFieldEditing
+                        )
+                        InputCompView(
+                            textLabel: "Country",
+                            textValue: $country,
+                            placeholder: "Enter your country",
+                            icon: "globe",
+                            enableEditing: enableFieldEditing
+                        )
+                        ButtonCompView(textBtn: "Submit") {
+                            updateUserDetails()
+                        }
+                    }
+                }// close v stack
+                .padding()
+                
+                
+                //on appear is method in every view load when first time load-- on appear when we need to get data or animation- call third party sdk
+                .onAppear{
+                    //            below function help to get datat from firebase
+                    getUserDetails()
                 }
             }
-        }// close paernt
-        .padding()
-        }//close navigation stack
-       
-        //on appear is method in every view load when first time load-- on appear when we need to get data or animation- call third party sdk
-        .onAppear{
-            //            below function help to get datat from firebase
-            getUserDetails()
+        }
+        // Auth state listener - updates isLoggedIn when user logs in or out
+        .onAppear {
+            // Check current auth state
+            isLoggedIn = Auth.auth().currentUser != nil
+            if isLoggedIn {
+                getUserDetails()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .AuthStateDidChange)) { _ in
+            // Update login state when auth changes
+            isLoggedIn = Auth.auth().currentUser != nil
+            if isLoggedIn {
+                getUserDetails()
+            }
         }
         .alert("Logout Failed", isPresented: .constant(logoutError != nil), presenting: logoutError) { _ in
             Button("OK") { logoutError = nil }
@@ -253,8 +306,3 @@ struct ProfileView: View {
         }
     }
 }
-
-#Preview {
-    ProfileView()
-}
-
