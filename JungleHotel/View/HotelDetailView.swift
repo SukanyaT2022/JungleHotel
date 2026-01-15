@@ -304,7 +304,7 @@ struct HotelDetailView: View {
             
             // Hotel name on the right
             Text(hotel.hotelNameType)
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.leading)
             
@@ -316,7 +316,7 @@ struct HotelDetailView: View {
     private var propertyHighlightsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Property highlights")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.primary)
             
             VStack(spacing: 20) {
@@ -331,7 +331,7 @@ struct HotelDetailView: View {
     private var contactInformationSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Contact Information")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.primary)
             
             VStack(spacing: 12) {
@@ -362,7 +362,7 @@ struct HotelDetailView: View {
                 if !hotel.contactNumber.isEmpty {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: "phone.fill")
-                            .font(.system(size: 18))
+                            .font(.system(size: 16))
                             .foregroundColor(.green)
                             .frame(width: 24)
                         
@@ -394,7 +394,7 @@ struct HotelDetailView: View {
     private var mapSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Location")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.primary)
             
             if let latitude = Double(hotel.latitude),
@@ -432,13 +432,14 @@ struct HotelDetailView: View {
                     )
             }
         }
+        .padding(.vertical,20)
     }
     
     // MARK: - Check In/Out Section
     private var checkInOutSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Select Dates")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(.primary)
             
             VStack(spacing: 16) {
@@ -551,7 +552,7 @@ struct HotelDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     // Button at bottom with consistent spacing
-                    ButtonCompView(textBtn: "Next:Final Step") {
+                    ButtonCompView(textBtn: "Next step") {
                         // Trigger navigation when button is tapped
                         navigateToPayment = true
                     }

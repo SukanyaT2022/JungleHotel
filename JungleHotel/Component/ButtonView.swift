@@ -17,15 +17,13 @@ struct ButtonCompView: View {
         }) {
             Text(textBtn)
                 .foregroundColor(.white)
-              
+                .fontWeight(.bold)
                 .frame(maxWidth: .infinity, alignment: .center)
 //                .padding(.horizontal, 24)
-                .padding(.vertical, 16)
-//                .frame(height: 50)
-                .background(
-                    Capsule()
-                        .fill(Color.green)
-                )
+                .padding(.vertical, 12)
+//                .frame(height: 30)
+                .background(Color.green)
+                .cornerRadius(10)
         }//close btn
         .buttonStyle(.plain)
             

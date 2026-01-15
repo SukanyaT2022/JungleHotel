@@ -149,14 +149,8 @@ struct PaymentView: View {
                             // start code connect firebase booking after successfull payment
                             
                             // Save booking to Firestore - using addDocument to allow multiple bookings per user
-                            db.collection("booking").addDocument(data: bookingData) { err in
-                                if let err = err {
-                                    print("❌ Firestore Error: \(err.localizedDescription)")
-                                    return
-                                }
-                                navigateToSuccessScreenVar = true
-                                print("✅ Booking saved to Firestore successfully")
-                            }
+                         
+                          
                             
                             
                             //end connect fire base
@@ -166,7 +160,17 @@ struct PaymentView: View {
                                 showLoginPopup = true
                             }else{
                                 isLoginAlready = true
+                               
                                 showCompleteView = true
+                                
+                                db.collection("booking").addDocument(data: bookingData) { err in
+                                    if let err = err {
+                                        print("❌ Firestore Error: \(err.localizedDescription)")
+                                        return
+                                    }
+                                    navigateToSuccessScreenVar = true
+                                    print("✅ Booking saved to Firestore successfully")
+                                }
                             }
                         }
                     } )
