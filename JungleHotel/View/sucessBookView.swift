@@ -9,73 +9,76 @@ import SwiftUI
 
 struct SuccessBookView: View {
     // We bring booking data from payment view line 131 to here.
-    @State private var goToHomeScreen: Bool = false
+    @Environment(\.dismiss) var dismiss
+    var onDismissToHome: () -> Void
     var bookingData: [String: Any]
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Image("mountainview")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .ignoresSafeArea()
-
-                VStack(spacing: 12) {
-                    Text("Successfully Booked!")
-                        .font(.title).bold()
-
-                    let checkin = bookingData["checkinDate"] as? String ?? "—"
-                    let checkout = bookingData["checkoutDate"] as? String ?? "—"
-                    let pricePerNight = bookingData["pricePerNight"] as? Int64
-                    let totalPrice = bookingData["totalPrice"] as? Int64
-
+        ZStack {
+            Image("mountainview")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 12) {
+                Text("Successfully Booked!")
+                    .font(.title).bold()
+                    .foregroundColor(.white)
+                
+                let checkin = bookingData["checkinDate"] as? String ?? "—"
+                let checkout = bookingData["checkoutDate"] as? String ?? "—"
+                let pricePerNight = bookingData["pricePerNight"] as? Int64
+                let totalPrice = bookingData["totalPrice"] as? Int64
+                
                 Text("Check-in Date: \(checkin)")
+                    .foregroundColor(.white)
                 Text("Check-out Date: \(checkout)")
-                if let pricePerNight { Text("Price per night: \(pricePerNight)") }
-                if let totalPrice { Text("Total price: \(totalPrice)") }
-               
-                Button("Back to HomeScreen") {
-                    goToHomeScreen = true
+                    .foregroundColor(.white)
+                if let pricePerNight {
+                    Text("Price per night: $\(pricePerNight)")
+                        .foregroundColor(.white)
                 }
-                .navigationDestination(isPresented: $goToHomeScreen) {
-                   MainScreenView()
+                if let totalPrice {
+                    Text("Total price: $\(totalPrice)")
+                        .foregroundColor(.white)
+                        .font(.headline)
                 }
-                .padding(.top,40)
+                
+                Button {
+                    dismiss()
+                    // Delay to allow dismiss animation to complete
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        onDismissToHome()
+                    }
+                } label: {
+                    Text("Back to HomeScreen")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.top, 40)
             }
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 16)
-//                    .fill(.ultraThinMaterial)
-                    .fill(.windowBackground)
+                    .fill(.ultraThinMaterial)
             )
             .padding()
-//            button go home screen
-           
-                     
-                    }
-                    .navigationDestination(isPresented: $goToHomeScreen) {
-                        MainScreenView()
-                    }
-                    .padding(.top, 40)
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.windowBackground)
-                )
-                .padding()
-            } // close ZStack
-        
-        } // close NavigationStack
-       
- 
-
+        } // close ZStack
+    } // close body
+} // close struct
 
 #Preview {
-    SuccessBookView(bookingData: [
-        "checkinDate": "2025-12-24",
-        "checkoutDate": "2025-12-28",
-        "pricePerNight": Int64(199),
-        "totalPrice": Int64(796)
-    ])
+    SuccessBookView(
+        onDismissToHome: { print("Dismiss to home") },
+        bookingData: [
+            "checkinDate": "2025-12-24",
+            "checkoutDate": "2025-12-28",
+            "pricePerNight": Int64(199),
+            "totalPrice": Int64(796)
+        ]
+    )
 }

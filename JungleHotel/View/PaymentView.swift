@@ -11,12 +11,8 @@ import FirebaseFirestore
 import SwiftUI
 
 struct PaymentView: View {
-//    below state is for navigation link -- help to move to successscreen connect line 148
-    @State var navigateToSuccessScreenVar : Bool = false
+    @Environment(\.dismiss) var dismiss
     @State var showAlert: Bool = false
-    @State var navigationEnable:Bool = false
-    @State var isLoginAlready:Bool = false
-    @State var userModelPay:UserModel? = nil
     @State var showLoginPopup: Bool = false
     @State var showCompleteView: Bool = false
     
@@ -125,16 +121,7 @@ struct PaymentView: View {
                         "totalPrice": pricePerNight * Int64(numNight),
                     ]
                     
-                    //connect data to sucessful screen
-                    NavigationLink(
-                        destination: SuccessBookView(
-                            bookingData: bookingData,
-                        ),
-                        isActive: $navigateToSuccessScreenVar
-                    ) {
-                        EmptyView()
-                    }
-                    //end navigation link
+                    // Removed NavigationLink - using fullScreenCover instead (see line 220)
                     
                     //submit button book now
                     ButtonCompView(textBtn: "Book Now",action: {
@@ -155,22 +142,19 @@ struct PaymentView: View {
                             
                             //end connect fire base
                             
-                            if Auth.auth().currentUser?.uid  == nil {
-                                isLoginAlready = false
+                            if Auth.auth().currentUser?.uid == nil {
                                 showLoginPopup = true
-                            }else{
-                                isLoginAlready = true
-                               
-                                showCompleteView = true
-                                
+                            } else {
+                                // Save booking to Firestore first
                                 db.collection("booking").addDocument(data: bookingData) { err in
                                     if let err = err {
                                         print("❌ Firestore Error: \(err.localizedDescription)")
                                         return
                                     }
-                                    navigateToSuccessScreenVar = true
                                     print("✅ Booking saved to Firestore successfully")
                                 }
+                                // Then show success screen
+                                showCompleteView = true
                             }
                         }
                     } )
@@ -202,19 +186,7 @@ struct PaymentView: View {
                 isKeyboardFocused = false
             }
             .fullScreenCover(isPresented: $showLoginPopup) {
-                if let userId = Auth.auth().currentUser?.uid  {
-                    let bookingData: [String: Any] = [
-                        "checkinDate": formatDate(checkinDatePayment),
-                        "checkoutDate": formatDate(checkoutDatePayment),
-                        "pricePerNight": pricePerNight,
-                        "totalPrice": pricePerNight * Int64(numNight),
-                    ]
-                    SuccessBookView(
-                        bookingData: bookingData)
-                }else{
-                 PopUpLoginView()
-                }
-                return EmptyView()
+                PopUpLoginView()
             }
         }
         .fullScreenCover(isPresented: $showCompleteView) {
@@ -225,7 +197,12 @@ struct PaymentView: View {
                 "totalPrice": pricePerNight * Int64(numNight),
             ]
             SuccessBookView(
-                bookingData: bookingData,
+                onDismissToHome: {
+                    // Dismiss PaymentView to go back to the previous screen (which should have the tab bar)
+                    dismiss()
+                    dismiss()
+                },
+                bookingData: bookingData
             )
         }
     }
