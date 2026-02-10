@@ -19,6 +19,7 @@ struct MainScreenView: View {
     @State private var searchText = ""
     @State private var showingFilterOptions = false
     @State private var isOnline: Bool = true
+    @State private var selectedCategory: String = "Popular"
   
     // Filter state variables
     @State private var minPrice: Double = 0
@@ -26,42 +27,20 @@ struct MainScreenView: View {
     @State private var minRating: Double = 0
     @State private var selectedRoomTypes: Set<String> = []
     
-    // Date picker states
+    // Date picker states (used for detail screen defaults)
     @State private var checkInDate = Date()
     @State private var checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
     
-    // Guest selection states
-    @State private var numberOfRooms = 1
-    @State private var numberOfAdults = 2
-    @State private var numberOfChildren = 0
-    @State private var showingGuestPicker = false
-    
-    // Date picker states
-    @State private var showingCheckInPicker = false
-    @State private var showingCheckOutPicker = false
-    
     var body: some View {
         NavigationStack {
-            
-            GeometryReader { geometry in
-                ScrollView{
-                    ZStack(alignment: .top) {
-                        // Background content that can scroll
-                        contentView
-                            .padding(.top, 150) // move the card view down from input box- on the main view- Add padding to account for sticky header
-                        
-                        // Sticky header
-                        VStack(spacing: 0) {
-                            headerView
-                            Spacer()
-                        }
-                    }
-                }//close scrollview
-                //navigationbarhiden always need to be in navigation stack
-                .navigationBarHidden(true)
-                
-            }//close screlol view
-            
+            ScrollView(showsIndicators: false) {
+                homeContent
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .padding(.bottom, 20)
+            }
+            .background(liquidBackground)
+            .navigationBarHidden(true)
             .task {
                 await loadData()
             }
@@ -69,13 +48,6 @@ struct MainScreenView: View {
                 Task { await loadData() }
             }
         }
-//        search box native
-        .searchable(text: $searchText,placement: .navigationBarDrawer(displayMode: .always))
-//        .background(.ultraThinMaterial)
-        .background(.ultraThickMaterial)
-        
-      
-     
         .fullScreenCover(isPresented: $showingFilterOptions) {
             FilterOptionsView(
                 minPrice: $minPrice,
@@ -84,298 +56,201 @@ struct MainScreenView: View {
                 selectedRoomTypes: $selectedRoomTypes
             )
         }
-        .sheet(isPresented: $showingGuestPicker) {
-            GuestPickerView(
-                numberOfRooms: $numberOfRooms,
-                numberOfAdults: $numberOfAdults,
-                numberOfChildren: $numberOfChildren
-            )
-        }
-        .sheet(isPresented: $showingCheckInPicker) {
-            DatePickerView(
-                selectedDate: $checkInDate,
-                title: "Check-in Date",
-                minimumDate: Date()
-            ) { newDate in
-                checkInDate = newDate
-                // Ensure check-out is at least 1 day after check-in
-                if checkOutDate <= newDate {
-                    checkOutDate = Calendar.current.date(byAdding: .day, value: 1, to: newDate) ?? newDate
-                }
-            }
-        }
-        .sheet(isPresented: $showingCheckOutPicker) {
-            DatePickerView(
-                selectedDate: $checkOutDate,
-                title: "Check-out Date",
-                minimumDate: Calendar.current.date(byAdding: .day, value: 1, to: checkInDate) ?? checkInDate
-            ) { newDate in
-                checkOutDate = newDate
-            }
-        }
         .refreshable {
-            // Real-time listener handles updates automatically
-            // Just trigger a manual refresh if needed
             await loadData()
         }
     }
     
-    // MARK: - Pinterest-style Header View
-    private var headerView: some View {
-        VStack(spacing: 12) {
-            // Top section with logo and filter button
-            HStack {
-                navigationTitleView
+    private var headerSection: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Hello Sara")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Colors.textSecondary)
                 
-                Spacer()
-                
-                filterButton
+                Text("Welcome to Jungle hotel!")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(Colors.textPrimary)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            
-            // Custom search bar
-//            customSearchBar
-            
-            // Custom date and guest picker
-            customDateGuestPicker
-                .padding(.bottom, 12)
-        }
-        .background(
-            
-            Color(.systemBackground)
-                .ignoresSafeArea(.all, edges: .top)
-        )
-        .safeAreaInset(edge: .top) {
-            Color.clear.frame(height: 0)
-        }
-    }
-    
-    // MARK: - Custom Search Bar
-    private var customSearchBar: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
-                .font(.system(size: 18, weight: .medium))
-            
-            TextField("Where would you like to go?", text: $searchText)
-                .font(.system(size: 14))
-                .foregroundColor(.primary)
-                .textFieldStyle(PlainTextFieldStyle())
             
             Spacer()
             
-            // Navigation arrow
-            Image(systemName: "location.fill")
-                .foregroundColor(.black)
-                .font(.system(size: 18, weight: .medium))
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .background(Color(.systemGray6))
-        .cornerRadius(40)
-        .padding(.horizontal, 16)
-    }
-    
-    // MARK: - Custom Date and Guest Picker
-    private var customDateGuestPicker: some View {
-        VStack(spacing: 12) {
-            // Date selection row
-            HStack(spacing: 12) {
-                // Check-in date
-                Button(action: {
-                    showingCheckInPicker.toggle()
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.black)
-                            .font(.system(size: 18, weight: .medium))
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(dayFormatter.string(from: checkInDate))
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.black)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(40)
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                // Check-out date
-                Button(action: {
-                    showingCheckOutPicker.toggle()
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.black)
-                            .font(.system(size: 18, weight: .medium))
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(dayFormatter.string(from: checkOutDate))
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.black)
-                        }
-                        
-
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(40)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            
-            // Guest selection row
-            Button(action: {
-                showingGuestPicker.toggle()
-            }) {
-                HStack(spacing: 12) {
-                    Image(systemName: "person.fill")
-                        .foregroundColor(.black)
-                        .font(.system(size: 18, weight: .medium))
+            Button(action: {}) {
+                ZStack(alignment: .topTrailing) {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 40, height: 40)
+                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
+                        .overlay(
+                            Image(systemName: "bell")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(Colors.textPrimary)
+                        )
                     
-                    Text("\(numberOfRooms) room \(numberOfAdults) adults \(numberOfChildren) children")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.black)
-                    
-                    Spacer()
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 8, height: 8)
+                        .offset(x: -3, y: 3)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background(Color(.systemGray6))
-                .cornerRadius(40)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 16)
     }
     
-    // MARK: - Date Formatter
-    private var dayFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "E, MMM d"
-        return formatter
-    }
-    
-    // MARK: - Edge-to-Edge Search Bar (Old)
-    private var pinterestSearchBar: some View {
+    private var searchBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(Colors.textSecondary)
                 .font(.system(size: 16, weight: .medium))
             
-            TextField("Search hotels, rooms...", text: $searchText)
-                .font(.system(size: 16))
-                .foregroundColor(.primary)
-                .textFieldStyle(PlainTextFieldStyle()) // Remove underline
+            TextField("Search hotel", text: $searchText)
+                .font(.system(size: 14))
+                .foregroundColor(Colors.textPrimary)
             
             Spacer()
             
-            // Right side icons
-            HStack(spacing: 8) {
-                if !searchText.isEmpty {
-                    Button(action: {
-                        searchText = ""
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 16))
-                    }
-                }
-                
-              
+            Button {
+                showingFilterOptions.toggle()
+            } label: {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Colors.textPrimary)
+                    .padding(10)
+                    .background(Colors.chipBackground.opacity(0.8))
+                    .clipShape(Circle())
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity) // Make full width
-        .background(Color.white)
+        .padding(.vertical, 14)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 25)
-                .stroke(Color.black, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.6), lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 25))
+        .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
     }
     
-    // MARK: - Custom Navigation Title View
-    //target logo and navigation title
-    private var navigationTitleView: some View {
-        HStack(spacing: 8) {
-            // Option 1: System Icon (current)
-            Image(systemName: "leaf.fill")
-                .foregroundColor(.green)
-                .font(.title2)
-            
-            // Option 2: Custom Image (uncomment and add your logo to Assets.xcassets)
-            // Image("your-logo-name")
-            //     .resizable()
-            //     .aspectRatio(contentMode: .fit)
-            //     .frame(width: 24, height: 24)
-            
-            Text("Jungle Hotels")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-        }
-    }
-    
-    // MARK: - Content View
-    @ViewBuilder
-    private var contentView: some View {
-        if viewModel.isLoading {
-            loadingView
-        } else if !viewModel.errorMessage.isEmpty {
-            ErrorView(
-                message: viewModel.errorMessage,
-                onRetry: {
-                    //if user tap on retry button after show error -  it try to fetch data again
-                    print("🔄 MainScreenView: User tapped retry, attempting manual fetch")
-                    viewModel.fetchHotels()
-                }
-            )
-        } else {
-            hotelListContent
-                .padding(.top,16)
-            
-        }
-    }
-    
-    // MARK: - Loading View
-    private var loadingView: some View {
-        ProgressView("Loading Hotels...")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    
-    // MARK: - Hotel List Content
-    private var hotelListContent: some View {
-        let hotels = filteredHotels
-        print("🏨 MainScreenView: Rendering hotel list with \(hotels.count) hotels")
+    private var categoryChips: some View {
+        let categories = ["Popular", "Modern", "Beach", "Mountain"]
         
-        return LazyVStack(spacing: 16) {
-            ForEach(hotels) { hotel in
-                HotelSectionView(hotel: hotel, checkInDate:checkInDate, checkOutDate: checkOutDate)
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(categories, id: \.self) { category in
+                    Button {
+                        selectedCategory = category
+                    } label: {
+                        Text(category)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(selectedCategory == category ? .white : Colors.textSecondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(selectedCategory == category ? Colors.primary : Colors.chipBackground.opacity(0.7))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
-            PracticeSwiftData()
+            .padding(.vertical, 4)
         }
-        .padding(.horizontal, 16)
-        .padding(.top,8)
-        .scrollIndicators(.hidden)
     }
- 
     
-    // MARK: - Filter Button
-    private var filterButton: some View {
-        Button {
-            showingFilterOptions.toggle()
-        } label: {
-            Image(systemName: "slider.horizontal.3")
+    private func sectionHeader(title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(Colors.textPrimary)
+            
+            Spacer()
+            
+            Button("See all") { }
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(Colors.primary)
         }
+    }
+    
+    private var homeContent: some View {
+        Group {
+            if viewModel.isLoading {
+                VStack(spacing: 12) {
+                    ProgressView()
+                    Text("Loading hotels...")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(Colors.textSecondary)
+                }
+                .frame(maxWidth: .infinity, minHeight: 240)
+            } else if !viewModel.errorMessage.isEmpty {
+                ErrorView(
+                    message: viewModel.errorMessage,
+                    onRetry: {
+                        viewModel.fetchHotels()
+                    }
+                )
+                .frame(maxWidth: .infinity, minHeight: 240)
+            } else {
+                VStack(alignment: .leading, spacing: 20) {
+                    headerSection
+                    searchBar
+                    categoryChips
+                    
+                    sectionHeader(title: "All hotels")
+                    allHotelsList
+                }
+            }
+        }
+    }
+
+    private var liquidBackground: some View {
+        LinearGradient(
+            colors: [
+                Color(hex: "#F4FBF8"),
+                Color(hex: "#EAF3FF"),
+                Color(hex: "#F7F2FF")
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
+    
+    private var displayHotels: [HotelModel] {
+        if viewModel.hotels.isEmpty && viewModel.errorMessage.isEmpty && !viewModel.isLoading {
+            return [HotelModel.sampleHotel]
+        }
+        return filteredHotels
+    }
+    
+    private var displayRooms: [(hotel: HotelModel, room: Room)] {
+        displayHotels.flatMap { hotel in
+            hotel.roomObj.map { room in
+                (hotel: hotel, room: room)
+            }
+        }
+    }
+    
+    private var allHotelsList: some View {
+        let rooms = displayRooms
+        
+        return VStack(spacing: 16) {
+            ForEach(rooms, id: \.room.id) { item in
+                NavigationLink(
+                    destination: HotelDetailView(
+                        room: item.room,
+                        hotel: item.hotel,
+                        pricePerNightDetail: item.room.roomPrice,
+                        checkInDateSecond: checkInDate,
+                        checkOutDateSecond: checkOutDate
+                    )
+                ) {
+                    HotelCardView(room: item.room, hotelName: item.hotel.hotelNameType)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.vertical, 4)
     }
     
     // MARK: - Native Date Picker Section
@@ -575,6 +450,72 @@ struct MainScreenView: View {
     private func awaitCheckReachability() throws -> Bool {
         // TODO: Replace with a real reachability check using NWPathMonitor in your networking layer.
         return true
+    }
+}
+
+// MARK: - Nearby Hotel Row View
+struct NearbyHotelRowView: View {
+    let hotel: HotelModel
+    let room: Room
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            AsyncImage(url: URL(string: room.roomImage.first ?? "")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Image("waterfall")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
+            .frame(width: 72, height: 72)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            
+            VStack(alignment: .leading, spacing: 6) {
+                Text(hotel.hotelNameType)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Colors.textPrimary)
+                    .lineLimit(1)
+                
+                HStack(spacing: 6) {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(Colors.textSecondary)
+                    Text(room.roomDetail)
+                        .font(.system(size: 11))
+                        .foregroundColor(Colors.textSecondary)
+                        .lineLimit(1)
+                }
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.yellow)
+                    Text(String(format: "%.1f", room.roomRating))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(Colors.textSecondary)
+                }
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("$\(room.roomPrice)")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(Colors.textPrimary)
+                Text("/ night")
+                    .font(.system(size: 11))
+                    .foregroundColor(Colors.textSecondary)
+            }
+        }
+        .padding(12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.white.opacity(0.6), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
     }
 }
 

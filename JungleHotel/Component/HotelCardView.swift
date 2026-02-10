@@ -12,74 +12,95 @@ struct HotelCardView: View {
     let hotelName: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Room Images Carousel
-            ImageCarouselView(images: room.roomImage)
-                .frame(height: 200)
-             
-                .clipShape(
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 12,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: 12
-                    )
-                )
-             
-            
-            // Room Details
-            VStack(alignment: .leading, spacing: 8) {
-                // Room Name
-                Text(room.roomName)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                
-                // Room Detail
-                Text(room.roomDetail)
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                
-                // Rating
-                HStack {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.yellow)
-                        .font(.caption)
-                    Text(String(format: "%.1f", room.roomRating))
-                        .font(.caption)
-                        .fontWeight(.medium)
-                    
-                    Spacer()
-                    
-                    // Availability
-                    Text(room.roomAvailbility)
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(room.roomAvailbility.lowercased() == "available" ? Color.green.opacity(0.2) : Color.red.opacity(0.2))
-                        .foregroundColor(room.roomAvailbility.lowercased() == "available" ? .green : .red)
-                        .cornerRadius(5)
-            
-                }
-                
-                // Price
-                HStack {
-                    Text("$\(room.roomPrice)")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                    Text("per night")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+        ZStack(alignment: .top) {
+            AsyncImage(url: URL(string: room.roomImage.first ?? "")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Image("waterfall")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            .frame(height: 200)
+            .clipped()
+            
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 12, weight: .semibold))
+                    Text(String(format: "%.1f", room.roomRating))
+                        .font(.system(size: 12, weight: .semibold))
+                }
+                .foregroundColor(.black)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.white.opacity(0.9))
+                .clipShape(Capsule())
+                
+                Spacer()
+                
+                Image(systemName: "heart")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.white.opacity(0.25))
+                    .clipShape(Circle())
+            }
+            .padding(12)
+            
+            VStack {
+                Spacer()
+                
+                LinearGradient(
+                    colors: [Color.black.opacity(0.0), Color.black.opacity(0.55)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 90)
+                .overlay(
+                    HStack(alignment: .bottom) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(hotelName)
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                            
+                            HStack(spacing: 6) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.white.opacity(0.9))
+                                Text(room.roomDetail)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .lineLimit(1)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 4) {
+                            Text("$\(room.roomPrice)")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                            Text("/night")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.9))
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 12),
+                    alignment: .bottom
+                )
+            }
         }
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-        .padding(4)
+        .frame(width: 280, height: 200)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.35), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 8)
     }
 }
 

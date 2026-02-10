@@ -20,10 +20,10 @@ struct ButtonCompView: View {
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity, alignment: .center)
 //                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
 //                .frame(height: 30)
-                .background(Color.green)
-                .cornerRadius(10)
+                .background(Colors.primary)
+                .cornerRadius(24)
         }//close btn
         .buttonStyle(.plain)
             

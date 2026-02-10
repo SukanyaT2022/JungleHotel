@@ -185,6 +185,7 @@ struct PaymentView: View {
                 }// end vstack
                 .padding(.top, 20)
                 .padding(.horizontal, 10)
+                .padding(.bottom, 120)
             }//close scroll view
             .onAppear{
                 for family in UIFont.familyNames.sorted() {

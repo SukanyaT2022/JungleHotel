@@ -51,8 +51,8 @@ struct BookingBottomView: View {
                     bookingListView
                 }
             }
-            .navigationTitle("My Bookings")
-            .navigationBarTitleDisplayMode(.large)
+//            .navigationTitle("My Bookings")
+//            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
             checkAuthAndFetch()
@@ -134,34 +134,40 @@ struct BookingBottomView: View {
             }
     }
     
-    // MARK: - Not Logged In View
+    // MARK: - Sign in to your account
     private var notLoggedInView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "person.crop.circle.badge.questionmark")
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
-            
-            Text("Not Logged In")
+       
+        VStack(spacing: 40) {
+            Text("Welcome to Jungle Hotel")
                 .font(.title2)
                 .fontWeight(.semibold)
+            Image("waterfalllogin")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 300, height: 300)
+                .cornerRadius(30
+                )
             
-            Text("Please log in to view your bookings")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            
-            Button {
-                showLoginSheet = true
-            } label: {
-                Text("Log In")
+            VStack(spacing: 15){
+                Text("Sign in to your account")
                     .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 200, height: 50)
-                    .background(Color.green)
-                    .cornerRadius(12)
+                    .fontWeight(.semibold)
+                
+                Button {
+                    showLoginSheet = true
+                } label: {
+                    Text("Log In")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 300, height: 45)
+                        .background(Colors.primary)
+                        .cornerRadius(26)
+//                        
+                }//close button
             }
+         
         }
-        .padding()
+        .padding(.bottom,100)
         .fullScreenCover(isPresented: $showLoginSheet) {
             PopUpLoginView()
         }

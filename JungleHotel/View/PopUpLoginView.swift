@@ -10,8 +10,8 @@ import FirebaseAuth
 
 enum SocialIconType: String, CaseIterable {
     case google
-    case facebook
-    case apple
+//    case facebook
+//    case apple
 }
 struct PopUpLoginView: View {
     @State private var googleSiginPopupVisible: Bool = false
@@ -32,12 +32,13 @@ struct PopUpLoginView: View {
         switch loginType {
         case .google:
             GoogleLoginView()
-        case .facebook:
-            Text("Facebook Login View")
-                .font(.title)
-        case .apple:
-            Text("Apple Login View")
-                .font(.title)
+//        case .facebook:
+//            Text("Facebook Login View")
+//                .font(.title)
+//        case .apple:
+//            Text("Apple Login View")
+//                .font(.title)
+     
         }
     }
     
@@ -130,8 +131,8 @@ struct PopUpLoginView: View {
 
         ZStack {
             // Background
-            Color(red: 0.2, green: 0.3, blue: 0.5)
-                .edgesIgnoringSafeArea(.all)
+            Color.white
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Back Button
@@ -141,40 +142,33 @@ struct PopUpLoginView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
+                            .foregroundColor(Colors.textPrimary)
                             .frame(width: 40, height: 40)
-                            .background(Color.white)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(
+                                Circle().stroke(Color.white.opacity(0.6), lineWidth: 1)
+                            )
                             .clipShape(Circle())
                     }
                     .padding(.leading, 20)
                     Spacer()
                 }
-                .padding(.top, 50)
+                .padding(.top, 30)
                 
                 Spacer()
                     .frame(height: 20)
                 
-                // White Card Container
+                // Card Container
                 VStack(spacing: 24) {
                     // Logo
                     VStack(spacing: 16) {
-                        Image(systemName: "leaf.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(Color.orange)
-                            .overlay(
-                                Image(systemName: "leaf.fill")
-                                    .font(.system(size: 60))
-                                    .foregroundColor(Color.blue)
-                                    .rotationEffect(.degrees(180))
-                                    .offset(x: 20, y: 0)
-                            )
-                        
-                        Text("Jungle Hotel")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.black)
-                            .tracking(2)
+                        Image("logoimage")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
                     }
-                    .padding(.top, 40)
+                    .padding(.top, 0)
                     
                     // Auth error message
                     if let authErrorMessage {
@@ -184,11 +178,13 @@ struct PopUpLoginView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 24)
                     }
-                    
+                    VStack(spacing: 20) {
+                        
+              
                     // Email Field
                     HStack {
                         Image(systemName: "envelope")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Colors.textSecondary)
                             .frame(width: 20)
                         
                         TextField("Enter your email", text: $email)
@@ -197,17 +193,17 @@ struct PopUpLoginView: View {
                             .font(.system(size: 15))
                     }
                     .padding()
-                    .background(Color.white)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .stroke(Color.white.opacity(0.6), lineWidth: 1)
                     )
                     .padding(.horizontal, 24)
                     
                     // Password Field
                     HStack {
                         Image(systemName: "lock")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Colors.textSecondary)
                             .frame(width: 20)
                         
                         if showPassword {
@@ -222,14 +218,14 @@ struct PopUpLoginView: View {
                             showPassword.toggle()
                         }) {
                             Image(systemName: showPassword ? "eye" : "eye.slash")
-                                .foregroundColor(.gray)
+                                .foregroundColor(Colors.textSecondary)
                         }
                     }
                     .padding()
-                    .background(Color.white)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .stroke(Color.white.opacity(0.6), lineWidth: 1)
                     )
                     .padding(.horizontal, 24)
                     
@@ -240,12 +236,12 @@ struct PopUpLoginView: View {
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: rememberMe ? "checkmark.square.fill" : "square")
-                                    .foregroundColor(rememberMe ? Color(red: 0.2, green: 0.3, blue: 0.5) : .gray)
+                                    .foregroundColor(rememberMe ? Colors.primary : Colors.textSecondary)
                                     .font(.system(size: 18))
                                 
                                 Text("Remember me")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Colors.textSecondary)
                             }
                         }
                         
@@ -256,64 +252,65 @@ struct PopUpLoginView: View {
                         }) {
                             Text("Forgot password")
                                 .font(.system(size: 14))
-                                .foregroundColor(.gray)
+                                .foregroundColor(Colors.textSecondary)
                         }
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal,20)
                     
-                    // Sign In Button
-                    Button(action: {
-                        if !isLoading {
-                            signInWithEmailPassword()
-                        }
-                    }) {
-                        HStack(spacing: 8) {
-                            if isLoading {
-                                ProgressView()
-                                    .progressViewStyle(.circular)
-                                    .tint(.white)
+                    }
+                    .padding(.horizontal, 28)
+                    //close v stack wrap email password remember me
+                    
+                    
+                    //wrap sign in and sign out button
+                    VStack(spacing: 0) {
+                        // Sign In Button
+                        Button(action: {
+                            if !isLoading {
+                                signInWithEmailPassword()
                             }
-                            Text(isLoading ? "Signing in..." : "Sign in")
+                        }) {
+                            HStack(spacing: 8) {
+                                if isLoading {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(.white)
+                                }
+                                Text(isLoading ? "Signing in..." : "Sign in")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 300, height: 20)
+                            .padding()
+                            .background(Colors.primary)
+                            .opacity(isLoading ? 0.8 : 1.0)
+                            .cornerRadius(26)
+                        }
+                        .disabled(isLoading)
+                        .padding(.horizontal, 24)
+                        
+                        // Sign Up Button (create account)
+                        NavigationLink("", destination: SignUpView(), isActive: $isSignup)
+                        Button(action: {
+                            if !isLoading {
+                            isSignup = true
+                            }
+                        }) {
+                            Text(isLoading ? "Creating account..." : "Sign up")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.white)
                         }
-                        .frame(maxWidth: .infinity)
+                        .frame(width: 300, height: 20)
                         .padding()
-                        .background(Color(red: 0.2, green: 0.3, blue: 0.5))
+                        .background(Colors.primary)
                         .opacity(isLoading ? 0.8 : 1.0)
-                        .cornerRadius(25)
+                        .cornerRadius(26)
                     }
                     .disabled(isLoading)
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 8)
+                    }
+                //end wrap vstack  sign in and sign out button
                     
-                    // Sign Up Button (create account)
-                    NavigationLink("", destination: SignUpView(), isActive: $isSignup)
-                    Button(action: {
-                        if !isLoading {
-                        isSignup = true
-                        }
-                    }) {
-                        Text(isLoading ? "Creating account..." : "Sign up")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(red: 0.2, green: 0.3, blue: 0.5))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.white)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
-                            .cornerRadius(25)
-                    }
-                    .disabled(isLoading)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
-                }
-                .background(Color.white)
-                .cornerRadius(30)
-                .padding(.horizontal, 24)
-                
                 // Social Login Buttons
                 ZStack {
                     HStack(spacing: 24) {
@@ -325,8 +322,12 @@ struct PopUpLoginView: View {
                         {
                             ZStack {
                                 Circle()
-                                    .fill(Color.white)
+                                    .fill(.ultraThinMaterial)
                                     .frame(width: 56, height: 56)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                                    )
                                 
                                 
                                 Image(systemName: "g.circle.fill")
@@ -338,41 +339,41 @@ struct PopUpLoginView: View {
                             }
                         }
                         
-                        // Facebook
-                        Button(action: {
-                            loginType = .facebook
-                            googleSiginPopupVisible = true
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 56, height: 56)
-                                
-                                Image(systemName: "f.circle.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.blue)
-                            }
-                        }
-                        
-                        // Apple
-                        Button(action: {
-                            loginType = .apple
-                            googleSiginPopupVisible = true
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 56, height: 56)
-                                
-                                Image(systemName: "apple.logo")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.black)
-                            }
-                        }
+//                        // Facebook
+//                        Button(action: {
+//                            loginType = .facebook
+//                            googleSiginPopupVisible = true
+//                        }) {
+//                            ZStack {
+//                                Circle()
+//                                    .fill(Color.white)
+//                                    .frame(width: 56, height: 56)
+//
+//                                Image(systemName: "f.circle.fill")
+//                                    .resizable()
+//                                    .frame(width: 30, height: 30)
+//                                    .font(.system(size: 30))
+//                                    .foregroundColor(.blue)
+//                            }
+//                        }
+//
+//                        // Apple
+//                        Button(action: {
+//                            loginType = .apple
+//                            googleSiginPopupVisible = true
+//                        }) {
+//                            ZStack {
+//                                Circle()
+//                                    .fill(Color.white)
+//                                    .frame(width: 56, height: 56)
+//
+//                                Image(systemName: "apple.logo")
+//                                    .resizable()
+//                                    .frame(width: 30, height: 30)
+//                                    .font(.system(size: 30))
+//                                    .foregroundColor(.black)
+//                            }
+//                        }
                     }
                     
                     // Hidden NavigationLink that triggers based on loginType
@@ -382,22 +383,26 @@ struct PopUpLoginView: View {
                 .padding(.top, 32)
                 
                 // Sign Up Link
-                HStack(spacing: 4) {
-                    Text("Don't have an account?")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.8))
-                    
-                    Button(action: {
-                        isSignup = true
-                    }) {
-                        Text("Sign Up here")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(Color.orange)
+                VStack{
+                    VStack(spacing: 4) {
+                        Text("Don't have an account?")
+                            .font(.system(size: 14))
+                            .foregroundColor(Colors.textSecondary)
+                        
+                        Button(action: {
+                            isSignup = true
+                        }) {
+                            Text("Sign Up here")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(Color(hex: "#FFB347"))
+                        }
                     }
+                    Spacer()
                 }
-                .padding(.top, 20)
-                
+               
+                .padding(.top, 24)
                 Spacer()
+           
             }
         }
         .alert(isPresented: $showAlertNotCorrectPassword) {
